@@ -1,0 +1,147 @@
+C51 COMPILER V9.56.0.0   ADC                                                               08/25/2020 17:22:26 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE ADC
+OBJECT MODULE PLACED IN .\Objects\adc.obj
+COMPILER INVOKED BY: C:\program_list\keil\C51\BIN\C51.EXE ..\hardware\ADC\adc.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..
+                    -\hardware\DELAY;..\hardware\ADC;..\hardware\Flash;..\hardware\Uart;..\hardware\Key;..\hardware\Pwm;..\hardware\WDT;..\ha
+                    -rdware\Timer;..\hardware\LCDdisplay;..\hardware\PID) DEBUG OBJECTEXTEND PRINT(.\Listings\adc.lst) TABS(2) OBJECT(.\Objec
+                    -ts\adc.obj)
+
+line level    source
+
+   1          #include "adc.h"
+   2          #include "delay.h"
+   3          #include "flash.h"
+   4          
+   5          void adc_init ( void )
+   6          {
+   7   1        P0M3 = 0x01;    //P03设置为模拟输入
+   8   1        P0M7 = 0x01;        //P07设置为模拟输入
+   9   1        P0M2 = 0x01;        //P02设置为模拟输入
+  10   1        ADCC0 = 0x81;   //打开ADC转换电源      4V为内部参考电压
+  11   1        //00 VDD
+  12   1      //                      01 内部4V
+  13   1      //                      10 内部3V
+  14   1      //                      11 内部2V
+  15   1      //1、 内部参考电压选择为 2V 时， VDD 电压须高于 2.7V；
+  16   1      //    内部参考电压选择为 3V 时， VDD 电压须高于 3.5V；
+  17   1      //    内部参考电压选择为 4V 时， VDD 电压须高于4.5V。
+  18   1      //2、 系统进入掉电模式前，建议将 ADC 参考电压选择非 VDD，可以进一步降低系统功耗。
+  19   1        delay_us ( 80 );            //延时20us，确保ADC系统稳定
+  20   1      
+  21   1      //  ADCC1 = 0x08;           //选择ADC通道8
+  22   1        ADCC2 = 0x49;;            //转换结果12位数据，数据右对齐，ADC时钟4分频 4M/4 = 1MHz
+  23   1      }
+  24          
+  25          u16 get_adc_val_P07 ( void )
+  26          {
+  27   1        u16 adc_val = 0;
+  28   1        ADCC1 = 0x07;           //选择ADC通道7
+  29   1        ADCC0 |= 0x40;          //启动ADC转换
+  30   1        while ( ! ( ADCC0&0x20 ) );     //等待ADC转换结束
+  31   1        ADCC0 &=~ 0x20;         //清除标志位
+  32   1        adc_val = ADCR;         //获取ADC的值
+  33   1      //  ADCR = 0;
+  34   1        return adc_val;
+  35   1      }
+  36          
+  37          u16 get_adc_val_P03 ( void )
+  38          {
+  39   1        u16 adc_val = 0;
+  40   1        ADCC1 = 0x03;           //选择ADC通道0
+  41   1        ADCC0 |= 0x40;          //启动ADC转换
+  42   1        while ( ! ( ADCC0&0x20 ) );     //等待ADC转换结束
+  43   1        ADCC0 &=~ 0x20;         //清除标志位
+  44   1        adc_val = ADCR;         //获取ADC的值
+  45   1      //  ADCR = 0;
+  46   1        return adc_val;
+  47   1      }
+  48          
+  49          u16 get_adc_val_P02 ( void )
+  50          {
+  51   1        u16 adc_val = 0;
+  52   1        ADCC1 = 0x02;           //选择ADC通道2
+C51 COMPILER V9.56.0.0   ADC                                                               08/25/2020 17:22:26 PAGE 2   
+
+  53   1        ADCC0 |= 0x40;          //启动ADC转换
+  54   1        while ( ! ( ADCC0&0x20 ) );     //等待ADC转换结束
+  55   1        ADCC0 &=~ 0x20;         //清除标志位
+  56   1        adc_val = ADCR;         //获取ADC的值
+  57   1      //  ADCR = 0;
+  58   1        return adc_val;
+  59   1      }
+  60          
+  61          void get_voltage ( u16* u1_voltage,u16* u3_voltage )
+  62          {
+  63   1        u32 temp = 0;
+  64   1        u8  i = 0;
+  65   1        
+  66   1        for ( i=0; i<5; i++ )
+  67   1        {
+  68   2          temp+=get_adc_val_P03();
+  69   2        }
+  70   1        temp/=5;
+  71   1        *u1_voltage = temp*4000/4095;
+  72   1        
+  73   1        delay_us ( 20 );
+  74   1        temp = 0;
+  75   1        for ( i=0; i<5; i++ )
+  76   1        {
+  77   2          temp+=get_adc_val_P07();
+  78   2        }
+  79   1        temp/=5;
+  80   1        *u3_voltage = temp*4000/4095;
+  81   1        
+  82   1      }
+  83          
+  84          u16 Detection_Input_Voltage(void)
+  85          {
+  86   1         
+  87   1        u32 tep = 0;
+  88   1        u8 i = 0;
+  89   1      
+  90   1        for ( i = 0; i < 5; i++ )
+  91   1        {
+  92   2          tep += get_adc_val_P02();
+  93   2        }
+  94   1        tep /= 5;
+  95   1        tep = tep*4000/4096;  //放大1000倍 保存小数点后三位 4096
+  96   1      
+  97   1        return tep;
+  98   1      }
+  99          
+ 100          //u16 get_voltage_val ( void )
+ 101          //{
+ 102          //  u32 tep = 0;
+ 103          //  u8 i = 0;
+ 104          //
+ 105          //  for ( i = 0; i < 5; i++ )
+ 106          //  {
+ 107          //    tep += get_adc_val();
+ 108          //  }
+ 109          //  tep /= 5;
+ 110          //  tep = tep*4000/4096;  //放大1000倍 保存小数点后三位 4096
+ 111          //  return tep;
+ 112          //}
+ 113          
+ 114          
+C51 COMPILER V9.56.0.0   ADC                                                               08/25/2020 17:22:26 PAGE 3   
+
+ 115          
+ 116          
+ 117          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    551    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----      16
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

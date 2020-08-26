@@ -1,0 +1,160 @@
+C51 COMPILER V9.56.0.0   PID                                                               08/25/2020 17:22:28 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE PID
+OBJECT MODULE PLACED IN .\Objects\PID.obj
+COMPILER INVOKED BY: C:\program_list\keil\C51\BIN\C51.EXE ..\hardware\PID\PID.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..
+                    -\hardware\DELAY;..\hardware\ADC;..\hardware\Flash;..\hardware\Uart;..\hardware\Key;..\hardware\Pwm;..\hardware\WDT;..\ha
+                    -rdware\Timer;..\hardware\LCDdisplay;..\hardware\PID) DEBUG OBJECTEXTEND PRINT(.\Listings\PID.lst) TABS(2) OBJECT(.\Objec
+                    -ts\PID.obj)
+
+line level    source
+
+   1          #include "PID.h"
+   2          PID_ValueStr spid; //定义一个结构体 存储PID各种算法
+   3          u8 PID_RunFlag = 0;
+   4          
+   5          /****************************************************/
+   6          /*
+   7          函数名称：PID_Init()
+   8          函数功能：PID数值初始化
+   9          入口参数：无
+  10          出口参数：无
+  11          函数说明：初始化PID参数
+  12          */
+  13          /****************************************************/
+  14          void PID_Init(void)
+  15          {
+  16   1        spid.iCurVal = 0;
+  17   1        spid.iPriVal = 0;
+  18   1        spid.iSetVal = 0;
+  19   1      
+  20   1        spid.uKD_Coe = 1;  //微分系数
+  21   1        spid.uKI_Coe = 1;  //积分系数
+  22   1        spid.uKP_Coe = 2;  //比例系数
+  23   1      }
+  24          /***************************************************/
+  25          /*
+  26          函数名称；PID_Operation()
+  27          函数功能：PID运算
+  28          入口参数：null
+  29          出口参数：null
+  30          函数说明；U(k)+KP*[E(K)- E(K-1)]+KI*E(k)+KD*[E(k)-2E(k-1)+E(k-2)]
+  31          */
+  32          /********************************************************/
+  33          void PID_Operation ( void )
+  34          {
+  35   1        u32 temp[3]= {0};                                        //存储中间临时变量
+  36   1        u32 PostSum = 0;                                         //正数和
+  37   1        u32 NegSum = 0;                                          //负数和
+  38   1        if ( spid.iSetVal > spid.iCurVal )
+  39   1        {
+  40   2          if ( spid.iSetVal - spid.iCurVal > 100 )
+  41   2          {
+  42   3            spid.iPriVal = 100;                               //偏差大于10℃为上限幅值(全速加热)
+  43   3          }
+  44   2          else
+  45   2          {
+  46   3            temp[0]=spid.iSetVal - spid.iCurVal;              //计算偏差值
+  47   3            spid.uEkFlag[1] = 0;                              //E(k)为正数，因为设定值大于实际值
+  48   3            /*数值进行移位，注意顺序，否则会覆盖掉前面数值*/
+  49   3            spid.liEkVal[2] = spid.liEkVal[1];
+  50   3            spid.liEkVal[1] = spid.liEkVal[0];
+  51   3            spid.liEkVal[0] = temp[0];
+  52   3            /*=================================================================*/
+C51 COMPILER V9.56.0.0   PID                                                               08/25/2020 17:22:28 PAGE 2   
+
+  53   3            if ( spid.liEkVal[0] > spid.liEkVal[1] )
+  54   3            {
+  55   4              temp[0]=spid.liEkVal[0] - spid.liEkVal[1];     //E(k)>E(k-1)
+  56   4              spid.uEkFlag[0] = 0;                           //E(k)-E(k-1)为正数
+  57   4            }
+  58   3            else
+  59   3            {
+  60   4              temp[0] = spid.liEkVal[1] - spid.liEkVal[0];
+  61   4              spid.uEkFlag[0] = 1;
+  62   4            }
+  63   3            /*==================================================================*/
+  64   3            temp[2]=spid.liEkVal[1]*2;
+  65   3            if ( ( spid.liEkVal[0]+spid.liEkVal[2] ) >temp[2] )  //E(k-2)+E(k)>2E(k-1)
+  66   3            {
+  67   4              temp[2] = ( spid.liEkVal[0] + spid.liEkVal[2] )- temp[2];
+  68   4              spid.uEkFlag[2] = 0;                             //E(k-2)+E(k)-2E(K-1)为正数
+  69   4            }
+  70   3            else                                                 //E(k-2)+E(k)<2E(k-1)
+  71   3            {
+  72   4              temp[2]= temp[2] - ( spid.liEkVal[0]+spid.liEkVal[2] );
+  73   4              spid.uEkFlag[2]=1;                              //E(k-2)+E(k)-2E(K-1)为负数
+  74   4            }
+  75   3            /*==================================================================*/
+  76   3            temp[0] = ( u32 ) spid.uKP_Coe*temp[0];             //KP*[E(k)-E(k-1)]
+  77   3            temp[1] = ( u32 ) spid.uKI_Coe*spid.liEkVal[0];     //KI*E(k)
+  78   3            temp[2] = ( u32 ) spid.uKD_Coe*temp[2];             //KD*[E(k-1)+E(k)-2E(k-1)]
+  79   3            /*一下部分代码是讲所有正数项叠加，负数项叠加*/
+  80   3            /*======================计算KP[E(k)-E(k-1)]=================*/
+  81   3            if ( spid.uEkFlag[0]==0 )
+  82   3            {
+  83   4              PostSum +=temp[0];                              //正数和
+  84   4            }
+  85   3            else
+  86   3            {
+  87   4              NegSum +=temp[0];                               //负数和
+  88   4            }
+  89   3            /*=======================计算KI*E(k)===================================*/
+  90   3            if ( spid.uEkFlag[1]==0 )
+  91   3            {
+  92   4              PostSum +=temp[0];                               //正数和
+  93   4            }
+  94   3            //是在spid.iSetVal > spid.iCurVal情况下不会为负数
+  95   3            /*====================计算KD*[E(k-2)+E(k)-2E(k-1)]的值===============*/
+  96   3            if ( spid.uEkFlag[2]==0 )
+  97   3            {
+  98   4              PostSum+=temp[2];   //正数和
+  99   4            }
+ 100   3            else
+ 101   3            {
+ 102   4              NegSum+=temp[2];   //负数和
+ 103   4            }
+ 104   3            /*=====================计算U(k)的值=================================*/
+ 105   3            PostSum += ( u32 ) spid.iPriVal;
+ 106   3            if ( PostSum>NegSum ) //控制量是否为正数
+ 107   3            {
+ 108   4              temp[0]=PostSum-NegSum;
+ 109   4              if ( temp[0]<100 )
+ 110   4              {
+ 111   5                spid.iPriVal = ( u16 ) temp[0];   //小于上限幅值为计算值输出
+ 112   5              }
+ 113   4              else
+ 114   4              {
+C51 COMPILER V9.56.0.0   PID                                                               08/25/2020 17:22:28 PAGE 3   
+
+ 115   5                spid.iPriVal = 100;    //大于上限幅值为上限值输出
+ 116   5              }
+ 117   4            }
+ 118   3            else //控制量为负数，则控制输出为0
+ 119   3            {
+ 120   4              spid.iPriVal =0;
+ 121   4            }
+ 122   3          }
+ 123   2      
+ 124   2        }
+ 125   1        else
+ 126   1        {
+ 127   2          spid.iPriVal = 0;    //spid.iSetVal < spid.iCurVal 控制输出值直接为0 停止加热
+ 128   2        }
+ 129   1      }
+ 130          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1096    ----
+   CONSTANT SIZE    =     12    ----
+   XDATA SIZE       =     25      20
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
