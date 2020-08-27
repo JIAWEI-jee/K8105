@@ -22,27 +22,27 @@ typedef enum GAP_TYPE
 	GAP_1 	= 0X01,
 	GAP_2	= 0X02,
 	GAP_3	= 0X03,
-	GAP_H	= 0X04,
+	GAP_4	= 0X04,
 	GAP_5	= 0X05,
 	GAP_6	= 0X06,
 	GAP_7	= 0X07,
 	GAP_8	= 0X08,
 	GAP_9	= 0X09,
-  GAP_4   = 0X0A,
+  
 };
 
 typedef enum GAP_TEMP
 {
 	GAP_WARM_temp	= 30,
-	GAP_1_temp 	= 48,
-	GAP_2_temp	= 60,
-	GAP_3_temp	= 70,
-	GAP_4_temp	= 80,
-	GAP_5_temp	= 70,
+	GAP_1_temp 	= 50,
+	GAP_2_temp	= 54,
+	GAP_3_temp	= 57,
+	GAP_4_temp	= 60,
+	GAP_5_temp	= 65,
 	GAP_6_temp	= 70,
-	GAP_7_temp	= 70,
-	GAP_8_temp	= 70,
-	GAP_9_temp	= 70,
+	GAP_7_temp	= 75,
+	GAP_8_temp	= 80,
+	GAP_9_temp	= 85,
 };
 	typedef enum corrected_value
 	{

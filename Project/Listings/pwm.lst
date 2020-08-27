@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   PWM                                                               08/25/2020 17:22:27 PAGE 1   
+C51 COMPILER V9.56.0.0   PWM                                                               08/26/2020 19:34:25 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE PWM
@@ -30,20 +30,19 @@ line level    source
   18   1        //      = 0xFF /(16000000 / 128)      
   19   1        //      = 1/255 /125000
   20   1        //      = 490HZ
-  21   1      //  pwm_period = (31250/hz)-1;      //31250 = 4000000/128
+  21   1        pwm_period = (31250/hz)-1;      //31250 = 4000000/128
   22   1        pwm_period = 0xFF;
   23   1        PWM3P = pwm_period;         //PWM周期  
   24   1      
   25   1        PWM3C = 0x97;             //使能PWM3，关闭中断，允许输出，时钟128分频 111
   26   1      }
-*** WARNING C280 IN LINE 10 OF ..\hardware\Pwm\pwm.c: 'hz': unreferenced local variable
   27          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     56    ----
+   CODE SIZE        =     62    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =      1       2
+   XDATA SIZE       =      1    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
@@ -51,4 +50,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

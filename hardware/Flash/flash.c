@@ -130,7 +130,7 @@ void flash_init(void)
         Flash_ReadArr(FLASH_DATA_ADDRESS,sizeof(flash_info),(u8 *)(&flash_info));
         gm_printf("power on flash gap:%d  timer:%d \r\n",(u16)flash_info.gap,(u16)flash_info.timer);
         gm_printf("========================================\r\n");
-        if(flash_info.gap > GAP_H || flash_info.timer > TIMER_8H)//读出数据不合法
+        if(flash_info.gap > GAP_9 || flash_info.timer > TIMER_8H)//读出数据不合法
             init_flag = 1;
     }
     if(init_flag == 1)

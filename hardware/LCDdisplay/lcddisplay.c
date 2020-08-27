@@ -368,7 +368,7 @@ void set_gap ( u8 number )
 {
 	switch ( number )
 	{
-		case GAP_H:
+		case GAP_WARM_temp:
 			if ( ( guc_DisFreshStep ==  Frame0_COM0 ) || ( guc_DisFreshStep == Frame1_COM0 ) )
 			{
 
