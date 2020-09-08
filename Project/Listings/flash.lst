@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   FLASH                                                             08/26/2020 19:34:25 PAGE 1   
+C51 COMPILER V9.56.0.0   FLASH                                                             09/04/2020 18:31:48 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE FLASH
@@ -12,9 +12,9 @@ line level    source
 
    1          #include "flash.h"
    2          #include "uart.h"
-   3          //#include "timer.h"
+   3          #include "timer.h"
    4          
-   5          flash_info_t flash_info;
+   5          flash_info_t flash_info = {0,0,0,0,0};
    6          u8 flash_check[4] = {0x20,0x20,0x05,0x01};
    7          u8 device_state = OFF;
    8          u16 Input_Voltage_std = 0;
@@ -62,7 +62,7 @@ line level    source
   50   1        IAP_CMD=0xE11E;         //触发一次操作
   51   1      }
   52          
-C51 COMPILER V9.56.0.0   FLASH                                                             08/26/2020 19:34:25 PAGE 2   
+C51 COMPILER V9.56.0.0   FLASH                                                             09/04/2020 18:31:48 PAGE 2   
 
   53          /**
   54            * @说明   写入任意长度的数据到FLASH里面
@@ -126,7 +126,7 @@ line level    source
  112   1        return 0;
  113   1      }
  114          
-C51 COMPILER V9.56.0.0   FLASH                                                             08/26/2020 19:34:25 PAGE 3   
+C51 COMPILER V9.56.0.0   FLASH                                                             09/04/2020 18:31:48 PAGE 3   
 
  115          
  116          void flash_init(void)
@@ -145,49 +145,53 @@ line level    source
  129   2              gm_printf("\r\n========================================\r\n");
  130   2              Flash_ReadArr(FLASH_DATA_ADDRESS,sizeof(flash_info),(u8 *)(&flash_info));
  131   2              gm_printf("power on flash gap:%d  timer:%d \r\n",(u16)flash_info.gap,(u16)flash_info.timer);
- 132   2              gm_printf("========================================\r\n");
- 133   2              if(flash_info.gap > GAP_9 || flash_info.timer > TIMER_8H)//读出数据不合法
- 134   2                  init_flag = 1;
- 135   2          }
- 136   1          if(init_flag == 1)
- 137   1          {
- 138   2              gm_printf("=============first init data=========== \r\n");
- 139   2              flash_info.gap    = GAP_1;    //default 1 gap 
- 140   2              flash_info.timer  = TIMER_0_5H; //default 0.5H
- 141   2              Flash_EraseBlock(FLASH_CHECK_ADDRESS);//擦除地址 FLASH_CHECK_ADDRESS 所在扇区
- 142   2              Flash_WriteArr(FLASH_CHECK_ADDRESS,4,flash_check);
- 143   2              Flash_WriteArr(FLASH_DATA_ADDRESS,sizeof(flash_info),(u8 *)(&flash_info));
- 144   2              Flash_ReadArr(FLASH_CHECK_ADDRESS,4,flash_check);
- 145   2              gm_printf("0x%04X  0x%04X  0x%04X  0x%04X \r\n",(u16)flash_check[0],(u16)flash_check[1],(u16)flash
+ 132   2              gm_printf("power on flash value:%d  sign:%d \r\n",(u16)flash_info.correct_value,(u16)flash_info.corre
+             -ct_sign);
+ 133   2              gm_printf("========================================\r\n");
+ 134   2              if(flash_info.gap > GAP_9 || flash_info.timer > TIMER_8H)//读出数据不合法
+ 135   2                  init_flag = 1;
+ 136   2          }
+ 137   1          if(init_flag == 1)
+ 138   1          {
+ 139   2              gm_printf("=============first init data=========== \r\n");
+ 140   2              flash_info.gap    = GAP_1;    //default 1 gap 
+ 141   2              flash_info.timer  = TIMER_0_5H; //default 0.5H
+ 142   2              Flash_EraseBlock(FLASH_CHECK_ADDRESS);//擦除地址 FLASH_CHECK_ADDRESS 所在扇区
+ 143   2              Flash_WriteArr(FLASH_CHECK_ADDRESS,4,flash_check);
+ 144   2              Flash_WriteArr(FLASH_DATA_ADDRESS,sizeof(flash_info),(u8 *)(&flash_info));
+ 145   2              Flash_ReadArr(FLASH_CHECK_ADDRESS,4,flash_check);
+ 146   2              gm_printf("0x%04X  0x%04X  0x%04X  0x%04X \r\n",(u16)flash_check[0],(u16)flash_check[1],(u16)flash
              -_check[2],(u16)flash_check[3]);
- 146   2              gm_printf("========================================\r\n");
- 147   2          }
- 148   1          gm_printf("flash gap:%d  timer:%d \r\n",(u16)flash_info.gap,(u16)flash_info.timer);
- 149   1      }
- 150          
+ 147   2              gm_printf("========================================\r\n");
+ 148   2          }
+ 149   1          gm_printf("flash gap:%d  timer:%d \r\n",(u16)flash_info.gap,(u16)flash_info.timer);
+ 150   1      }
  151          
- 152          void flah_save_data(void)
- 153          {
- 154   1        // gm_printf("========================================\r\n");
- 155   1        Flash_EraseBlock(FLASH_DATA_ADDRESS);
- 156   1        Flash_WriteArr(FLASH_CHECK_ADDRESS,4,flash_check);
- 157   1        Flash_WriteArr(FLASH_DATA_ADDRESS,sizeof(flash_info),(u8 *)(&flash_info));
- 158   1        Flash_ReadArr(FLASH_DATA_ADDRESS,sizeof(flash_info),(u8 *)(&flash_info));
- 159   1        // gm_printf("read flash gap:%d  timer:%d \r\n",(u16)flash_info.gap,(u16)flash_info.timer);
- 160   1        // gm_printf("========================================\r\n");
- 161   1      }
- 162          
+ 152          
+ 153          void flah_save_data(void)
+ 154          {
+ 155   1        // gm_printf("========================================\r\n");
+ 156   1        Flash_EraseBlock(FLASH_DATA_ADDRESS);
+ 157   1        Flash_WriteArr(FLASH_CHECK_ADDRESS,4,flash_check);
+ 158   1        Flash_WriteArr(FLASH_DATA_ADDRESS,sizeof(flash_info),(u8 *)(&flash_info));
+ 159   1        Flash_ReadArr(FLASH_DATA_ADDRESS,sizeof(flash_info),(u8 *)(&flash_info));
+ 160   1        // gm_printf("read flash gap:%d  timer:%d \r\n",(u16)flash_info.gap,(u16)flash_info.timer);
+ 161   1        // gm_printf("========================================\r\n");
+ 162   1      }
  163          
+ 164          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    634    ----
-   CONSTANT SIZE    =    226    ----
-   XDATA SIZE       =      9      13
+   CODE SIZE        =    669    ----
+   CONSTANT SIZE    =    262    ----
+   XDATA SIZE       =     12      13
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
+C51 COMPILER V9.56.0.0   FLASH                                                             09/04/2020 18:31:48 PAGE 4   
+
 END OF MODULE INFORMATION.
 
 

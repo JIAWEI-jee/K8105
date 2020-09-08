@@ -59,7 +59,7 @@ static void key_handle ( void )
 	{
 		key_val = 0;
 	}
-	if ( (key_val == KEY_1_PRES)&&(calibration_std == 0) )
+	if ( key_val == KEY_1_PRES )
 	{
 		KEY_printf ( " key_scan\r\n" );
 		if ( get_device_state() == ON )
@@ -134,53 +134,15 @@ static void key_handle ( void )
 	}
 }
 
-
-u16 calibration_temperature(u16 temper)
-{
-	u8 temp1 = 0;
-	if ( (usart_rx_flag == 2)&&(calibration_std == 1))
-	{	
-		temp1 = (u8)temper;
-		usart_rx_flag = 0;
-    flash_info.correct_std = 1;
-//		hal_uart_putchar(temp1);
-//		hal_uart_putchar(temper_val);
-	 if (temper_val > 15)	
-	 { 
-		if (temper_val > temp1)
-		{
-		  flash_info.correct_value = temper_val - temp1;
-			flash_info.correct_sign = 1; //?a?y1?2?
-		}
-		else 
-		{
-		 flash_info.correct_value = temp1 - temper_val;
-			
-			hal_uart_putchar(flash_info.correct_value);
-		 flash_info.correct_sign = 2; //?a?o1?2?
-		}	
-		if ((flash_info.correct_value < 2)||(flash_info.correct_value > 20))
-		{
-		   flash_info.correct_value = 0;
-			 flash_info.correct_sign = 0;
-		}
-		flah_save_data();
-		producte_send_cmd(0x02, 0x02);
-	 }
-	}
-		if (flash_info.correct_sign == 1)
-	{
-	 return ((u16) (temper = temper + flash_info.correct_value) );
-	}
-	else if ( flash_info.correct_sign == 2)
-	{
-	 return ((u16) (temper = temper - flash_info.correct_value) );
-	}
-	return ((u16) temper );
-
-}	
-
-
+/***************************************************/
+/*
+函数名称；temp_calc()
+函数功能：温度处理函数
+入口参数：uRt ,uRw
+出口参数：temperature
+函数说明；根据ADC侦测到的值计算实际温度值
+*/
+/********************************************************/
 
 u16 temp_calc ( u16 uRt,u16 uRw )
 {
@@ -201,7 +163,7 @@ u16 temp_calc ( u16 uRt,u16 uRw )
 	{
 		return 0xff;
 	}
-	//gm_printf ( "R = %f  \r\n",u1 );
+//	gm_printf ( "R = %f  \r\n",u1 );
 
 
 	if ( u1 > Temperature_Value )
@@ -252,9 +214,8 @@ void temperature_handle ( void )
 
 		//	KEY_printf ( "adv1 = %d adv2 =%d \r\n",adc_val1,adc_val2 );  //pjw set
 		temp = temp_calc ( adc_val1, adc_val2 );
-	//	KEY_printf ( "temp val:%d \r\n",temp );
-    	temp =	calibration_temperature(temp);
-		KEY_printf ( "%d \r\n",temp );
+		//	KEY_printf ( "temp val:%d \r\n",temp );
+
 
 		if ( adc_val1 > 90 ) //adc_val1 > 50
 		{
@@ -274,7 +235,7 @@ void temperature_handle ( void )
 					{
 						Heat_start_std = 1;
 						heat_step = 1;
-					//	KEY_printf ( "first_heat_std heat_step = 1; \r\n" );  //pjw set
+						//	KEY_printf ( "first_heat_std heat_step = 1; \r\n" );  //pjw set
 					}
 				}
 
@@ -286,31 +247,16 @@ void temperature_handle ( void )
 			}
 			else
 			{
-             
-            	if (calibration_std == 1)
-				{
-						set_pwm ( 0 );
-					lcd_clear_all();
-				     
-					lcd_cailbration ();
-				}
-				else
-				{	
-			
-				lcd_off( OFF );
+				lcd_off ( OFF );
 				set_pwm ( 0 );
 				lcd_clear_all();
-					
-				}	
-             
 			}
 			error_std = 0;
 		}
 		else
 		{
 
-	calibration_std = 0;
-      lcd_off( Error );
+			lcd_off ( Error );
 			lcd_error (  );
 			error_std = 1;
 		}

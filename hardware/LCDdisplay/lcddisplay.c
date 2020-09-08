@@ -1,5 +1,6 @@
 #include "lcddisplay.h"
 #include "flash.h"
+#include "key.h"
 
 display_set lcd_set = {0,0};
 
@@ -54,6 +55,26 @@ void lcd_error ( void )
 	}
 
 }
+
+void lcd_cailbration ( void )
+{
+	static u8 cailbration_std = 0;
+	if ( cailbration_std == 0 )
+	{
+		
+		lcd_set.gap_display = Clear_lcd;
+		lcd_set.time_display = Clear_lcd;
+		cailbration_std = 1;
+	}
+	else if ( cailbration_std == 1 )
+	{
+		
+		lcd_set.gap_display = GAP_WARM_temp;
+		cailbration_std = 0;
+	}
+
+}
+
 void lcd_display_time ( u8 time )
 {
 	
@@ -78,7 +99,7 @@ void lcd_display_On ( void )
 
 void LCD_Display ( void )
 {
- if ( (LCD_STD == ON)||(LCD_STD == Error))
+ if ( (LCD_STD == ON)||(LCD_STD == Error)||(calibration_std == 1))
 	 {
 		 LCDCON |= 0xE8;
 	switch ( guc_DisFreshStep )

@@ -2,6 +2,7 @@
 #define __KEY_H__
 #include "HC89F3541.H"
 
+extern u8 calibration_std;
 #define KEY_1 	P0_1
 #define KEY_2 	P2_7
 #define KEY_3 	P0_0
@@ -25,6 +26,10 @@
 #define KEY_1_SHORT  4
 #define KEY_1_LONG   5
 
+
+#define LONG_KEY_CALI_TIME  400
+#define KEY_CALI2_LONG       6
+#define KEY_CALI3_LONG       7
 
 void key_init(void);
 u8 key_scan(void);

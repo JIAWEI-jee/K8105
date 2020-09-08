@@ -1,4 +1,28 @@
 #include "uart.h"
+#include "key.h"
+
+ volatile u8 usart_rx_buffer[30] = {0};
+ volatile u8 usart_rx_cnt;
+ u8 usart_rx_flag = 0;
+ 
+u8 temper_val = 0;
+
+
+#define PRODUCTE_CMD_HEADER_VALUE                   0x55
+#define PRODUCTE_CMD_TAIL1_VALUE                    0x0D
+#define PRODUCTE_CMD_TAIL2_VALUE                    0x0A
+
+
+struct producte_cmd_struct
+{
+    u8 header;
+    u8 funcode;
+    u8 Data;
+    u8 tail1;
+    u8 tail2;
+};
+
+
 
 //初始化串口9600
 void uart_init(void)
@@ -41,9 +65,90 @@ static void hal_uart_putchar(char Char)
 	ES1= 1;				//UART1接收使能
 }
 
+
+/* @function:串口发送一个字节
+ * @param:需要发送的字节
+ * @return:None
+ */
+static void producte_com_send_one_bit(char Data)
+{
+   hal_uart_putchar(Data);
+}
+/* @function:串口发送数组
+ * @param:data:数组头指针
+ *        len:数组长度
+ * @return:None
+ */
+static void producte_com_send_data(u8 *Data, u8 len)
+{
+    u8 i;
+    for (i = 0; i < len; i++)
+    {
+        producte_com_send_one_bit(Data[i]);
+    }
+}
+
+/* @function:发送命令
+ * @param:funcode:功能码
+ *        data:数据
+ * @return:None
+ */
+ void producte_send_cmd(u8 funcode, u8 Data)
+{
+    struct producte_cmd_struct cmd_t;
+    cmd_t.header = PRODUCTE_CMD_HEADER_VALUE;
+    cmd_t.funcode = funcode;
+    cmd_t.Data = Data;
+    cmd_t.tail1 = PRODUCTE_CMD_TAIL1_VALUE;
+    cmd_t.tail2 = PRODUCTE_CMD_TAIL2_VALUE;
+    producte_com_send_data((u8 *)&cmd_t, sizeof(struct producte_cmd_struct));
+}
+
+
 //重写stdio 中的putchar函数  实现printf
 char putchar(char c)
 {
 	hal_uart_putchar(c);
 	return c;
 }
+
+
+void UART1_Rpt(void) interrupt UART1_VECTOR
+{
+   u8 Data = 0;
+	if(SCON & 0x01)						//判断接收中断标志位
+	{
+		Data = SBUF;				//转存8位串口接收数据	
+	//	hal_uart_putchar( Data);
+		SCON &=~ 0x01;              	//清除接收中断标志位
+		 /* receive Data */
+        switch(usart_rx_flag)
+        {
+            case 0:
+                if(Data == 0x55)
+                {
+                    usart_rx_buffer[0] = Data;
+                    usart_rx_cnt++;
+									//  putchar( usart_rx_cnt);
+                    usart_rx_flag = 1;
+									// hal_uart_putchar( Data);
+									// LED1 = !LED1;
+									
+                }
+                break;
+            case 1:
+			
+					temper_val = Data;
+					 //hal_uart_putchar( temper_val);
+				 usart_rx_flag = 2;
+				
+                break;
+
+        }
+				
+		
+    }
+	}									
+
+
+

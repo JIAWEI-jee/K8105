@@ -34,15 +34,15 @@ typedef enum GAP_TYPE
 typedef enum GAP_TEMP
 {
 	GAP_WARM_temp	= 30,
-	GAP_1_temp 	= 35,
-	GAP_2_temp	= 38,
-	GAP_3_temp	= 40,
-	GAP_4_temp	= 47,
-	GAP_5_temp	= 53,
-	GAP_6_temp	= 61,
-	GAP_7_temp	= 71,
-	GAP_8_temp	= 71,
-	GAP_9_temp	= 76,
+	GAP_1_temp 	= 42,
+	GAP_2_temp	= 46,
+	GAP_3_temp	= 49,
+	GAP_4_temp	= 52,
+	GAP_5_temp	= 57,
+	GAP_6_temp	= 62,
+	GAP_7_temp	= 66,
+	GAP_8_temp	= 72,
+	GAP_9_temp	= 77,
 };
 	typedef enum corrected_value
 	{
@@ -76,9 +76,6 @@ typedef struct _flash_info_t
 {
 	u8 gap;
 	u8 timer;
-	u8 correct_value;
-	u8 correct_sign;
-	u8 correct_std;
 } flash_info_t;
 
 extern flash_info_t flash_info;

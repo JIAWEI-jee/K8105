@@ -59,4 +59,5 @@ void lcd_clear_all ( void );
 void lcd_error ( void );
 void lcd_off(u8 std);
 void lcd_display_On(void);
+void lcd_cailbration ( void );
 #endif

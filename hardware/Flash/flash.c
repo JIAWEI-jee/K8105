@@ -1,8 +1,8 @@
 #include "flash.h"
 #include "uart.h"
-//#include "timer.h"
+#include "timer.h"
 
-flash_info_t flash_info;
+flash_info_t flash_info = {0,0,0,0,0};
 u8 flash_check[4] = {0x20,0x20,0x05,0x01};
 u8 device_state = OFF;
 u16 Input_Voltage_std = 0;
@@ -129,6 +129,7 @@ void flash_init(void)
         gm_printf("\r\n========================================\r\n");
         Flash_ReadArr(FLASH_DATA_ADDRESS,sizeof(flash_info),(u8 *)(&flash_info));
         gm_printf("power on flash gap:%d  timer:%d \r\n",(u16)flash_info.gap,(u16)flash_info.timer);
+			  gm_printf("power on flash value:%d  sign:%d \r\n",(u16)flash_info.correct_value,(u16)flash_info.correct_sign);
         gm_printf("========================================\r\n");
         if(flash_info.gap > GAP_9 || flash_info.timer > TIMER_8H)//读出数据不合法
             init_flag = 1;
