@@ -18,7 +18,7 @@ void pwm_init(u16 hz)
 	//			= 0xFF /(16000000 / 128)			
 	// 			= 1/255 /125000
 	// 			= 490HZ
-	pwm_period = (31250/hz)-1;			//31250 = 4000000/128
+//	pwm_period = (31250/hz)-1;			//31250 = 4000000/128
 	pwm_period = 0xFF;
 	PWM3P = pwm_period;					//PWMÖÜÆÚ  
 

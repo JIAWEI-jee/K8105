@@ -3,18 +3,72 @@
 #include "uart.h"
 #include "lcddisplay.h"
 #include "key.h"
+#include "adc.h"
+#include "pwm.h"
+#include "PID.h"
 //----------------time---------------
 u16 time_cnt = 0;
 u16 time_sec = 0;
 u16 cnt_heat_time = 0;
 u8 over_rang_time_std = 0;
 u8 Gap_protect_std = 0 ;
-u8 On_stay = 0;
+u8 On_stay = 0 , pwm_cnt = 0;
 
 u8 Heat_start_std = 0;
 u16 time_heat = 0;
 u16 temp_time = 0 ,cail_cnt = 0 ;
 u8  heat_step = 0;
+u16 pwm_jishu = 0;
+
+//void Controll_Heat ( void )
+//{
+//	//gm_printf ( " spid.iPriVal = %d \r\n",  spid.iPriVal);
+//	u8 heat_step_val = 100;
+//	if (Input_Voltage_std == V_24_status)
+//		{
+//          spid.iPriVal = spid.iPriVal/2;   
+//		      heat_step_val = 50;
+//	    }
+//	if (heat_step == 1)
+//		{
+//		  set_pwm (heat_step_val);
+//		}
+//	else if (heat_step == 0)
+//		
+//		{
+//	     set_pwm ((u8) spid.iPriVal);  //(u8) spid.iPriVal
+//		}
+//}
+
+
+void Heat_Operation ( u16 temp )
+{
+	
+	if(get_device_state() == ON)
+	{
+		if (Input_Voltage_std == V_12_status)
+		{
+           temp =  temp*2 ;   
+	   }
+		pwm_jishu++;
+		if ( temp > pwm_jishu )
+		{
+			set_pwm ( 100 );
+
+		}
+		else
+		{
+			set_pwm ( 0 );
+
+		}
+		if ( pwm_jishu == pwm_count )
+		{
+			pwm_jishu =0;
+		}
+	}	
+}
+
+
 void set_time_sec_val ( u16 sec )
 {
 	time_sec = sec;
@@ -163,6 +217,9 @@ void TIMER0_Rpt ( void ) interrupt TIMER0_VECTOR
 			//	gm_printf("time_sec=%d \r\n",time_sec);
 			time_cnt = 0;
 		}
+
+//		  Heat_Operation ( 500 );
+		
 	}
 	else if (calibration_std == 1)
 	{

@@ -56,7 +56,7 @@ void uart_init(void)
 
 
 //串口发送一个字符
-static void hal_uart_putchar(char Char)
+ void hal_uart_putchar(char Char)
 {
 	ES1= 0;				//失能UART1中断
 	SBUF = Char;
