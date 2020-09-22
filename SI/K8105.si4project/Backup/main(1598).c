@@ -32,7 +32,7 @@ void Clock ( void );
 void Set_Temp ( void );
 //void Controll_Heat ( void );
 //void Protect ( void );
-void Detection_Input(void);
+void Detection_Input ( void );
 
 
 
@@ -59,7 +59,7 @@ static void key_handle ( void )
 	{
 		key_val = 0;
 	}
-	if ( (key_val == KEY_1_PRES)&&(calibration_std == 0) )
+	if ( ( key_val == KEY_1_PRES ) && ( calibration_std == 0 ) )
 	{
 		KEY_printf ( " key_scan\r\n" );
 		if ( get_device_state() == ON )
@@ -135,48 +135,48 @@ static void key_handle ( void )
 }
 
 
-u16 calibration_temperature(u16 temper)
+u16 calibration_temperature ( u16 temper )
 {
 	u8 temp1 = 0;
-	if ( (usart_rx_flag == 2)&&(calibration_std == 1))
-	{	
-		temp1 = (u8)temper;
+	if ( ( usart_rx_flag == 2 ) && ( calibration_std == 1 ) )
+	{
+		temp1 = ( u8 ) temper;
 		usart_rx_flag = 0;
-    flash_info.correct_std = 1;
-	 if (temper_val > 15)	
-	 { 
-		if (temper_val > temp1)
+		flash_info.correct_std = 1;
+		if ( temper_val > 15 )
 		{
-		  flash_info.correct_value = temper_val - temp1;
-			flash_info.correct_sign = 1;
-		}
-		else 
-		{
-		 flash_info.correct_value = temp1 - temper_val;
-			
-			hal_uart_putchar(flash_info.correct_value);
-		 flash_info.correct_sign = 2; 
-		}	
-		if ((flash_info.correct_value < 2)||(flash_info.correct_value > 20))
-		{
-		   flash_info.correct_value = 0;
-			 flash_info.correct_sign = 0;
-		}
-		flah_save_data();
-		producte_send_cmd(0x02, 0x02);
-	 }
-	}
-		if (flash_info.correct_sign == 1)
-	{
-	 return ((u16) (temper = temper + flash_info.correct_value) );
-	}
-	else if ( flash_info.correct_sign == 2)
-	{
-	 return ((u16) (temper = temper - flash_info.correct_value) );
-	}
-	return ((u16) temper );
+			if ( temper_val > temp1 )
+			{
+				flash_info.correct_value = temper_val - temp1;
+				flash_info.correct_sign = 1;
+			}
+			else
+			{
+				flash_info.correct_value = temp1 - temper_val;
 
-}	
+				hal_uart_putchar ( flash_info.correct_value );
+				flash_info.correct_sign = 2;
+			}
+			if ( ( flash_info.correct_value < 2 ) || ( flash_info.correct_value > 20 ) )
+			{
+				flash_info.correct_value = 0;
+				flash_info.correct_sign = 0;
+			}
+			flah_save_data();
+			producte_send_cmd ( 0x02, 0x02 );
+		}
+	}
+	if ( flash_info.correct_sign == 1 )
+	{
+		return ( ( u16 ) ( temper = temper + flash_info.correct_value ) );
+	}
+	else if ( flash_info.correct_sign == 2 )
+	{
+		return ( ( u16 ) ( temper = temper - flash_info.correct_value ) );
+	}
+	return ( ( u16 ) temper );
+
+}
 
 
 
@@ -184,7 +184,7 @@ u16 temp_calc ( u16 uRt,u16 uRw )
 {
 	u16 i = 0;
 	u16 basi_tmp = 40;
-	
+
 	float u1 = 0;
 	float u3 = 0;
 	if ( uRt < 90 )
@@ -202,24 +202,26 @@ u16 temp_calc ( u16 uRt,u16 uRw )
 //	gm_printf ( "R = %f  \r\n",u1 );
 
 
-	if(u1 > Temperature_Value)
-		{
-         i = (u1 - Temperature_Value)/0.4;
-          //gm_printf("over 40  i:%d \r\n",i);
-			basi_tmp = basi_tmp + i;
-	    }
+	if ( u1 > Temperature_Value )
+	{
+		i = ( u1 - Temperature_Value ) /0.4;
+		//gm_printf("over 40  i:%d \r\n",i);
+		basi_tmp = basi_tmp + i;
+	}
 
 	else
-		{
-         i = (Temperature_Value - u1)/0.4;
-        //  gm_printf("under 40  i:%d \r\n",i);
-		  basi_tmp = basi_tmp - i;
-	    }
-		
+	{
+		i = ( Temperature_Value - u1 ) /0.4;
+		//  gm_printf("under 40  i:%d \r\n",i);
+		basi_tmp = basi_tmp - i;
+	}
+
 //	gm_printf("basi_tmp:%d \r\n",basi_tmp);
-if (flash_info.gap == GAP_3)
-      basi_tmp = basi_tmp - 5;
-		
+	if ( flash_info.gap == GAP_3 )
+	{
+		basi_tmp = basi_tmp - 5;
+	}
+
 	return  basi_tmp;
 }
 
@@ -246,13 +248,13 @@ void temperature_handle ( void )
 		adc_cnt = 0;
 		get_voltage ( &adc_val1,&adc_val2 );
 
-	//	KEY_printf ( "adv1 = %d adv2 =%d \r\n",adc_val1,adc_val2 );  //pjw set
+		//	KEY_printf ( "adv1 = %d adv2 =%d \r\n",adc_val1,adc_val2 );  //pjw set
 		temp = temp_calc ( adc_val1, adc_val2 );
-	//	KEY_printf ( "temp val:%d \r\n",temp );
-    	temp =	calibration_temperature(temp);
+		//	KEY_printf ( "temp val:%d \r\n",temp );
+		temp =	calibration_temperature ( temp );
 		KEY_printf ( "%d \r\n",temp );
 
-		if (adc_val1 > 90)  //adc_val1 > 50
+		if ( adc_val1 > 90 ) //adc_val1 > 50
 		{
 			if ( get_device_state() == ON )
 			{
@@ -270,7 +272,7 @@ void temperature_handle ( void )
 					{
 						Heat_start_std = 1;
 						heat_step = 1;
-					//	KEY_printf ( "first_heat_std heat_step = 1; \r\n" );  //pjw set
+						//	KEY_printf ( "first_heat_std heat_step = 1; \r\n" );  //pjw set
 					}
 				}
 
@@ -282,31 +284,31 @@ void temperature_handle ( void )
 			}
 			else
 			{
-             
-            	if (calibration_std == 1)
+
+				if ( calibration_std == 1 )
 				{
-						set_pwm ( 0 );
+					set_pwm ( 0 );
 					lcd_clear_all();
-				     
+
 					lcd_cailbration ();
 				}
 				else
-				{	
-			
-				lcd_off( OFF );
-				set_pwm ( 0 );
-				lcd_clear_all();
-					
-				}	
-             
+				{
+
+					lcd_off ( OFF );
+					set_pwm ( 0 );
+					lcd_clear_all();
+
+				}
+
 			}
 			error_std = 0;
 		}
 		else
 		{
 
-	calibration_std = 0;
-      lcd_off( Error );
+			calibration_std = 0;
+			lcd_off ( Error );
 			lcd_error (  );
 			error_std = 1;
 		}
@@ -334,7 +336,7 @@ void main()
 	key_init();
 	flash_init();
 	PID_Init();
-	pwm_init ( 200 );
+//	pwm_init ( 200 );
 	wdt_init ( 2 );
 	LCD_Init();
 	lcd_display_On();
@@ -356,8 +358,9 @@ void main()
 
 		temperature_handle();
 		key_handle ();
-		 Heat_Operation ( spid.iPriVal );
-	//	Protect ();
+		if (error_std == 0)
+		Heat_Operation ( spid.iPriVal );
+		//	Protect ();
 		clear_wdt();
 
 	}

@@ -53,11 +53,12 @@ void Heat_Operation ( u16 temp )
 		pwm_jishu++;
 		if ( temp > pwm_jishu )
 		{
-			heat_out = 1;
+			set_pwm ( 100 );
+
 		}
 		else
 		{
-			heat_out = 0;
+			set_pwm ( 0 );
 
 		}
 		if ( pwm_jishu == pwm_count )

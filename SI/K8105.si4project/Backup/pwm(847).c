@@ -10,7 +10,6 @@ void set_pwm(u8 duty)
 void pwm_init(void)
 {
 	P3M5 = 0xC0;                        //P35设置为推挽输出
-	heat_out = 0;
 //	PWM3_MAP = 0x35;					//PWM3映射P35口
 //
 //

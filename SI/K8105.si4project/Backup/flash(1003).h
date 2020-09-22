@@ -33,25 +33,13 @@ typedef enum GAP_TYPE
 
 typedef enum GAP_TEMP
 {
-//	GAP_WARM_temp	= 30,
-//	GAP_1_temp 	= 35,
-//	GAP_2_temp	= 38,
-//	GAP_3_temp	= 40,
-//	GAP_4_temp	= 47,
-//	GAP_5_temp	= 53,
-//	GAP_6_temp	= 61,
-//	GAP_7_temp	= 71,
-//	GAP_8_temp	= 71,
-//	GAP_9_temp	= 76,
-
 	GAP_WARM_temp	= 30,
-	GAP_1_temp 	= 40,
-	GAP_2_temp	= 48,
-	GAP_3_temp	= 56,
-	GAP_4_temp	= 66,
-	GAP_5_temp	= 71,
-	GAP_6_temp	= 77,
-	
+	GAP_1_temp 	= 35,
+	GAP_2_temp	= 38,
+	GAP_3_temp	= 40,
+	GAP_4_temp	= 47,
+	GAP_5_temp	= 53,
+	GAP_6_temp	= 61,
 	GAP_7_temp	= 71,
 	GAP_8_temp	= 71,
 	GAP_9_temp	= 76,

@@ -21,7 +21,7 @@
 #include "PID.h"
 
 #define SKU 8105
-#define SOFT_VER "1.01.00"
+#define SOFT_VER "1.00.00"
 
 
 u16 adc_cnt = 0;
@@ -86,7 +86,7 @@ static void key_handle ( void )
 		{
 
 			KEY_printf ( " KEY_2_PRES\r\n" );
-			if ( flash_info.gap < GAP_6 )
+			if ( flash_info.gap < GAP_9 )
 			{
 				flash_info.gap++;
 

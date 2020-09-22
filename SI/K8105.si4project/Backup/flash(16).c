@@ -131,7 +131,7 @@ void flash_init(void)
         gm_printf("power on flash gap:%d  timer:%d \r\n",(u16)flash_info.gap,(u16)flash_info.timer);
 			  gm_printf("power on flash value:%d  sign:%d \r\n",(u16)flash_info.correct_value,(u16)flash_info.correct_sign);
         gm_printf("========================================\r\n");
-        if(flash_info.gap > GAP_6 || flash_info.timer > TIMER_8H)//读出数据不合法
+        if(flash_info.gap > GAP_9 || flash_info.timer > TIMER_8H)//读出数据不合法
             init_flag = 1;
     }
     if(init_flag == 1)

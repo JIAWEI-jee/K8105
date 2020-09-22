@@ -18,7 +18,7 @@ extern u8 calibration_std;
 #define KEY_STATE_2         2
 #define KEY_STATE_3         3
  
-#define LONG_KEY_TIME       150    //长按时间
+#define LONG_KEY_TIME       200    //长按时间
 #define SINGLE_KEY_TIME     3      // 短按时间
  
 #define N_KEY         0             // 没有案件按下

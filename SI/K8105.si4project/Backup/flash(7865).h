@@ -45,9 +45,9 @@ typedef enum GAP_TEMP
 //	GAP_9_temp	= 76,
 
 	GAP_WARM_temp	= 30,
-	GAP_1_temp 	= 40,
-	GAP_2_temp	= 48,
-	GAP_3_temp	= 56,
+	GAP_1_temp 	= 47,
+	GAP_2_temp	= 53,
+	GAP_3_temp	= 58,
 	GAP_4_temp	= 66,
 	GAP_5_temp	= 71,
 	GAP_6_temp	= 77,
