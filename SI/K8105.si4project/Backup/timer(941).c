@@ -20,7 +20,6 @@ u16 temp_time = 0,cail_cnt = 0 ;
 u8  heat_step = 0;
 u16 pwm_jishu = 0;
 u16 pwm_set = 0;
-u16 correct_time = 0;
 void Heat_Operation ( u16 temp )
 {
 
@@ -30,10 +29,6 @@ void Heat_Operation ( u16 temp )
 		if ( Input_Voltage_std == V_12_status )
 		{
 			temp =  temp*2 ;
-		}
-		else if ( Input_Voltage_std == V_24_status )
-		{
-		  temp =  temp/2;
 		}
 		pwm_jishu++;
 		if ( temp > pwm_jishu )
@@ -90,51 +85,11 @@ void set_time_sec_val ( u16 sec )
 }
 
 
-void set_correct_time(u8 gap)
-{
-  
-switch ( gap )
-	{
-		case GAP_WARM:
-			correct_time = corrected_time_warm_temp;
-			break;
-		case GAP_1:
-			correct_time = corrected_time_GAP_1_temp;
-			break;
-		case GAP_2:
-			correct_time = corrected_time_GAP_2_temp;
-			break;
-		case GAP_3:
-			correct_time = corrected_time_GAP_3_temp;
-			break;
-		case GAP_4:
-			correct_time = corrected_time_GAP_4_temp;
-			break;
-		case GAP_5:
-			correct_time = corrected_time_GAP_5_temp;
-			break;
-		case GAP_6:
-			correct_time = corrected_time_GAP_6_temp;
-			break;
-		case GAP_7:
-			correct_time = corrected_time_GAP_7_temp;
-			break;
-		case GAP_8:
-			correct_time = corrected_time_GAP_8_temp;
-			break;
-		case GAP_9:
-			correct_time = corrected_time_GAP_9_temp;
-			break;
-
-}
-	}
-
-
 static void set_heat_val ( void )
 {
 	if ( Heat_start_std == 1 )
 	{
-		if ( ++time_heat > correct_time )
+		if ( ++time_heat > Heat_Value )
 		{
 
 			Heat_start_std = 0;

@@ -73,7 +73,6 @@ static void key_handle ( void )
 		{
 			set_device_state ( ON );
 			set_time_sec();
-			set_correct_time(flash_info.gap);
 			Set_Temp ( );
 			//	gm_printf ( " spid.iSetVal = %d \r\n",  spid.iSetVal);
 			first_heat_std = 1;
@@ -101,7 +100,6 @@ static void key_handle ( void )
 
 
 			first_heat_std = 1;
-			set_correct_time(flash_info.gap);
 			Set_Temp ( );
 			//	gm_printf ( " spid.iSetVal = %d \r\n",  spid.iSetVal);
 			lcd_display_gap ( flash_info.gap );
@@ -258,7 +256,7 @@ void temperature_handle ( void )
 		temp =	calibration_temperature ( temp );
 		KEY_printf ( "%d \r\n",temp );
 
-		if ( adc_val1 > 90 )          //adc_val1 > 50
+		if ( adc_val1 > 90 ) //adc_val1 > 50
 		{
 			if ( get_device_state() == ON )
 			{
@@ -266,7 +264,7 @@ void temperature_handle ( void )
 				if ( first_heat_std == 1 )
 				{
 					first_heat_std = 0;
-					if ( temp > 75 )
+					if ( temp > 50 )
 					{
 						Heat_start_std = 0;
 						heat_step = 0;
@@ -284,7 +282,7 @@ void temperature_handle ( void )
 				PID_Operation ();
 				lcd_display_time ( flash_info.timer );
 				lcd_display_gap ( flash_info.gap );
-        PWM_control ( flash_info.gap );
+//				Controll_Heat (  );
 			}
 			else
 			{
@@ -349,9 +347,6 @@ void main()
 	LCD_Init();
 	lcd_display_On();
 	delay_ms ( 1200 );
-	lcd_display_time ( TIMER_OFF );
-	 lcd_display_gap ( GAP_7 );
-	delay_ms ( 600 );
 	lcd_clear_all ();
 	Detection_Input();
 
@@ -370,7 +365,8 @@ void main()
 		temperature_handle();
 		key_handle ();
 		if (error_std == 0)
-		Heat_Operation ( pwm_set );
+		Heat_Operation ( spid.iPriVal );
+		//	Protect ();
 		clear_wdt();
 
 	}
@@ -437,7 +433,8 @@ void Set_Temp ( void )
 
 /*********************************************************/
 /*
-函数名称；Protect
+函数名称；Protect()
+函数功能：PID运算
 入口参数：null
 出口参数：null
 函数说明；大于Gap1档位情况下加热超过2小时会跳到Gap1

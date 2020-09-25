@@ -73,7 +73,6 @@ static void key_handle ( void )
 		{
 			set_device_state ( ON );
 			set_time_sec();
-			set_correct_time(flash_info.gap);
 			Set_Temp ( );
 			//	gm_printf ( " spid.iSetVal = %d \r\n",  spid.iSetVal);
 			first_heat_std = 1;
@@ -101,7 +100,6 @@ static void key_handle ( void )
 
 
 			first_heat_std = 1;
-			set_correct_time(flash_info.gap);
 			Set_Temp ( );
 			//	gm_printf ( " spid.iSetVal = %d \r\n",  spid.iSetVal);
 			lcd_display_gap ( flash_info.gap );
@@ -266,7 +264,7 @@ void temperature_handle ( void )
 				if ( first_heat_std == 1 )
 				{
 					first_heat_std = 0;
-					if ( temp > 75 )
+					if ( temp > 60 )
 					{
 						Heat_start_std = 0;
 						heat_step = 0;

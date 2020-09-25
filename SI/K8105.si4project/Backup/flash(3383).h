@@ -5,11 +5,6 @@
 #define FLASH_CHECK_ADDRESS   0X3C00 //用flash末尾1K(总16K)地址作为存储基地址 1024*14 = 0X3800   
 #define FLASH_DATA_ADDRESS	FLASH_CHECK_ADDRESS + 4
 
-//#define gap1_pwm_set   30
-//#define gap2_pwm_set   40
-//#define gap3_pwm_set   50
-#define full_pwm_set   100
-
 #define Correct_Value  0
 typedef enum TIMER_TYPE
 {
@@ -18,8 +13,7 @@ typedef enum TIMER_TYPE
 	TIMER_1H	= 0X02,
 	TIMER_2H	= 0X03,
 	TIMER_4H	= 0X04,
-	TIMER_8H	= 0X05,
-	TIMER_OFF = 0X06
+	TIMER_8H	= 0X05
 };
 
 typedef enum GAP_TYPE
@@ -51,9 +45,9 @@ typedef enum GAP_TEMP
 //	GAP_9_temp	= 76,
 
 	GAP_WARM_temp	= 30,
-	GAP_1_temp 	= 45,
-	GAP_2_temp	= 50,
-	GAP_3_temp	= 53,
+	GAP_1_temp 	= 40,
+	GAP_2_temp	= 48,
+	GAP_3_temp	= 56,
 	GAP_4_temp	= 66,
 	GAP_5_temp	= 71,
 	GAP_6_temp	= 77,
@@ -76,25 +70,6 @@ typedef enum GAP_TEMP
 		corrected_value_GAP_9_temp	= 18,
 	
 	};
-
-	typedef enum corrected_time
-			{
-				
-				corrected_time_warm_temp	= 30*1,
-				corrected_time_GAP_1_temp	= 30*9,
-				corrected_time_GAP_2_temp	= 30*11,
-				corrected_time_GAP_3_temp	= 30*11,
-				corrected_time_GAP_4_temp	= 60*4,
-				corrected_time_GAP_5_temp	= 60*4,
-				corrected_time_GAP_6_temp	= 60*4,
-				
-				corrected_time_GAP_7_temp	= 60*4,
-				corrected_time_GAP_8_temp	= 60*4,
-				corrected_time_GAP_9_temp	= 60*4,
-			
-			};
-
-
 
 typedef enum INPUT_VOLTAGE_STATE
 {

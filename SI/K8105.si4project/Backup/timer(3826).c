@@ -12,29 +12,44 @@ u16 time_sec = 0;
 u16 cnt_heat_time = 0;
 u8 over_rang_time_std = 0;
 u8 Gap_protect_std = 0 ;
-u8 On_stay = 0, pwm_cnt = 0;
+u8 On_stay = 0 , pwm_cnt = 0;
 
 u8 Heat_start_std = 0;
 u16 time_heat = 0;
-u16 temp_time = 0,cail_cnt = 0 ;
+u16 temp_time = 0 ,cail_cnt = 0 ;
 u8  heat_step = 0;
 u16 pwm_jishu = 0;
-u16 pwm_set = 0;
-u16 correct_time = 0;
+
+//void Controll_Heat ( void )
+//{
+//	//gm_printf ( " spid.iPriVal = %d \r\n",  spid.iPriVal);
+//	u8 heat_step_val = 100;
+//	if (Input_Voltage_std == V_24_status)
+//		{
+//          spid.iPriVal = spid.iPriVal/2;   
+//		      heat_step_val = 50;
+//	    }
+//	if (heat_step == 1)
+//		{
+//		  set_pwm (heat_step_val);
+//		}
+//	else if (heat_step == 0)
+//		
+//		{
+//	     set_pwm ((u8) spid.iPriVal);  //(u8) spid.iPriVal
+//		}
+//}
+
+
 void Heat_Operation ( u16 temp )
 {
-
-	if ( get_device_state() == ON )
+	
+	if(get_device_state() == ON)
 	{
-
-		if ( Input_Voltage_std == V_12_status )
+		if (Input_Voltage_std == V_12_status)
 		{
-			temp =  temp*2 ;
-		}
-		else if ( Input_Voltage_std == V_24_status )
-		{
-		  temp =  temp/2;
-		}
+           temp =  temp*2 ;   
+	   }
 		pwm_jishu++;
 		if ( temp > pwm_jishu )
 		{
@@ -49,36 +64,7 @@ void Heat_Operation ( u16 temp )
 		{
 			pwm_jishu =0;
 		}
-
-	}
-}
-
-void PWM_control ( u8 gap )
-{
-  if(heat_step == 1)
-	{
-	 pwm_set = full_pwm_set;
-	}
-else
-{	
-	switch ( gap )
-	{
-		case GAP_1:
-			pwm_set = spid.iPriVal;
-			break;
-		case GAP_2:
-			pwm_set = spid.iPriVal;
-			break;
-		case GAP_3:
-			pwm_set = spid.iPriVal;
-			break;
-		case GAP_4:
-		case GAP_5:
-		case GAP_6:
-			pwm_set = spid.iPriVal;
-			break;
-	}
-}
+	}	
 }
 
 
@@ -90,57 +76,17 @@ void set_time_sec_val ( u16 sec )
 }
 
 
-void set_correct_time(u8 gap)
-{
-  
-switch ( gap )
-	{
-		case GAP_WARM:
-			correct_time = corrected_time_warm_temp;
-			break;
-		case GAP_1:
-			correct_time = corrected_time_GAP_1_temp;
-			break;
-		case GAP_2:
-			correct_time = corrected_time_GAP_2_temp;
-			break;
-		case GAP_3:
-			correct_time = corrected_time_GAP_3_temp;
-			break;
-		case GAP_4:
-			correct_time = corrected_time_GAP_4_temp;
-			break;
-		case GAP_5:
-			correct_time = corrected_time_GAP_5_temp;
-			break;
-		case GAP_6:
-			correct_time = corrected_time_GAP_6_temp;
-			break;
-		case GAP_7:
-			correct_time = corrected_time_GAP_7_temp;
-			break;
-		case GAP_8:
-			correct_time = corrected_time_GAP_8_temp;
-			break;
-		case GAP_9:
-			correct_time = corrected_time_GAP_9_temp;
-			break;
-
-}
-	}
-
-
 static void set_heat_val ( void )
 {
 	if ( Heat_start_std == 1 )
 	{
-		if ( ++time_heat > correct_time )
+		if ( ++time_heat > Heat_Value )
 		{
-
+			//KEY_printf ( "exchange_heat_value \r\n" );
 			Heat_start_std = 0;
 			time_heat = 0;
 
-			heat_step = 0;
+       heat_step = 0;
 		}
 	}
 }
@@ -272,18 +218,18 @@ void TIMER0_Rpt ( void ) interrupt TIMER0_VECTOR
 		}
 
 //		  Heat_Operation ( 500 );
-
+		
 	}
-	else if ( calibration_std == 1 )
+	else if (calibration_std == 1)
 	{
-		if ( ++cail_cnt > cail_value )
+	  if (++cail_cnt > cail_value)
 		{
-			calibration_std = 0;
+		  calibration_std = 0;
 			cail_cnt = 0;
-
+			
 		}
 	}
 	LCD_Display();
-
+	
 }
 

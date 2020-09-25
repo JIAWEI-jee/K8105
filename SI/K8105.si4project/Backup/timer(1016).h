@@ -24,16 +24,13 @@ extern u8 over_rang_time_std;
 extern u8 Gap_protect_std;
 extern u8 On_stay;
 extern u8 Heat_start_std;
-
+extern u8  Open_Heat_Value;
 extern u8  heat_step;
-extern u16 pwm_set;
-extern u16 correct_time;
+extern u16 pwm_jishu;
+
 void time0_init(void);
 void set_time_sec_val(u16 sec);
 void set_time_sec(void);
 void Heat_Operation ( u16 temp );
-void PWM_control ( u8 gap );
-void set_correct_time(u8 gap);
-
 #endif
 

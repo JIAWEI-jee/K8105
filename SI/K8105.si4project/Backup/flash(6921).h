@@ -51,9 +51,9 @@ typedef enum GAP_TEMP
 //	GAP_9_temp	= 76,
 
 	GAP_WARM_temp	= 30,
-	GAP_1_temp 	= 45,
-	GAP_2_temp	= 50,
-	GAP_3_temp	= 53,
+	GAP_1_temp 	= 40,
+	GAP_2_temp	= 45,
+	GAP_3_temp	= 50,
 	GAP_4_temp	= 66,
 	GAP_5_temp	= 71,
 	GAP_6_temp	= 77,
@@ -76,25 +76,6 @@ typedef enum GAP_TEMP
 		corrected_value_GAP_9_temp	= 18,
 	
 	};
-
-	typedef enum corrected_time
-			{
-				
-				corrected_time_warm_temp	= 30*1,
-				corrected_time_GAP_1_temp	= 30*9,
-				corrected_time_GAP_2_temp	= 30*11,
-				corrected_time_GAP_3_temp	= 30*11,
-				corrected_time_GAP_4_temp	= 60*4,
-				corrected_time_GAP_5_temp	= 60*4,
-				corrected_time_GAP_6_temp	= 60*4,
-				
-				corrected_time_GAP_7_temp	= 60*4,
-				corrected_time_GAP_8_temp	= 60*4,
-				corrected_time_GAP_9_temp	= 60*4,
-			
-			};
-
-
 
 typedef enum INPUT_VOLTAGE_STATE
 {

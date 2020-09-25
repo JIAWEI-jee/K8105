@@ -826,6 +826,32 @@ void set_time ( u8 number )
 				SEG5 = 1;
 			}
 			break;
+			case TIMER_OFF:
+			if ( ( guc_DisFreshStep ==  Frame0_COM0 ) || ( guc_DisFreshStep == Frame1_COM0 ) )
+			{
+				SEG1 = 0;
+				SEG2 = 0;
+				SEG5 = 0;
+			}
+			if ( ( guc_DisFreshStep ==  Frame0_COM1 ) || ( guc_DisFreshStep == Frame1_COM1 ) )
+			{
+				SEG1 = 0;
+				SEG2 = 0;
+				SEG5 = 0;
+			}
+			if ( ( guc_DisFreshStep ==  Frame0_COM2 ) || ( guc_DisFreshStep == Frame1_COM2 ) )
+			{
+				SEG1 = 0;
+				SEG2 = 0;
+				SEG5 = 0;
+			}
+			if ( ( guc_DisFreshStep ==  Frame0_COM3 ) || ( guc_DisFreshStep == Frame1_COM3 ) )
+			{
+				SEG1 = 0;
+				SEG2 = 0;
+				SEG5 = 0;
+			}
+			break;
 	}
 
 }

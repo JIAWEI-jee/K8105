@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   FLASH                                                             09/21/2020 10:07:34 PAGE 1   
+C51 COMPILER V9.56.0.0   FLASH                                                             09/25/2020 14:03:51 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE FLASH
@@ -62,7 +62,7 @@ line level    source
   50   1        IAP_CMD=0xE11E;         //触发一次操作
   51   1      }
   52          
-C51 COMPILER V9.56.0.0   FLASH                                                             09/21/2020 10:07:34 PAGE 2   
+C51 COMPILER V9.56.0.0   FLASH                                                             09/25/2020 14:03:51 PAGE 2   
 
   53          /**
   54            * @说明   写入任意长度的数据到FLASH里面
@@ -126,7 +126,7 @@ line level    source
  112   1        return 0;
  113   1      }
  114          
-C51 COMPILER V9.56.0.0   FLASH                                                             09/21/2020 10:07:34 PAGE 3   
+C51 COMPILER V9.56.0.0   FLASH                                                             09/25/2020 14:03:51 PAGE 3   
 
  115          
  116          void flash_init(void)
@@ -190,7 +190,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
-C51 COMPILER V9.56.0.0   FLASH                                                             09/21/2020 10:07:34 PAGE 4   
+C51 COMPILER V9.56.0.0   FLASH                                                             09/25/2020 14:03:51 PAGE 4   
 
 END OF MODULE INFORMATION.
 

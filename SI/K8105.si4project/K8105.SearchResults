@@ -1,9 +1,2 @@
----- set_pwm Matches (8 in 3 files) ----
-key_handle in main.c (E:\project\K8105\code\debug_code\K8105\user) : 			set_pwm ( 0 );
-temperature_handle in main.c (E:\project\K8105\code\debug_code\K8105\user) : 					set_pwm ( 0 );
-temperature_handle in main.c (E:\project\K8105\code\debug_code\K8105\user) : 					set_pwm ( 0 );
-pwm.h (E:\project\K8105\code\debug_code\K8105\hardware\Pwm) line 6 : void set_pwm(u8 duty);
-timer.c (E:\project\K8105\code\debug_code\K8105\hardware\Timer) line 34 : //		  set_pwm (heat_step_val);
-timer.c (E:\project\K8105\code\debug_code\K8105\hardware\Timer) line 39 : //	     set_pwm ((u8) spid.iPriVal);  //(u8) spid.iPriVal
-Heat_Operation in timer.c (E:\project\K8105\code\debug_code\K8105\hardware\Timer) : 			set_pwm ( 100 );
-Heat_Operation in timer.c (E:\project\K8105\code\debug_code\K8105\hardware\Timer) : 			set_pwm ( 0 );
+---- Open_Heat_Value Matches (1 in 1 files) ----
+timer.h (E:\project\K8105\code\debug_code\K8105\hardware\Timer) line 27 : extern u8  Open_Heat_Value;
