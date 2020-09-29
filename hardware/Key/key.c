@@ -187,7 +187,7 @@ if(Calibration_key_driver() ==  KEY_CALI2_LONG)
 	}else if(KEY_2 == 1 && KEY_3 == 1)
 		key_up=1; 	
 
-	if(KEY_1 == 1 && key_pres_time > 1)
-		key_pres_time = 0;
+//	if(KEY_1 == 1 && key_pres_time > 1)
+//		key_pres_time = 0;
  	return 0;// 无按键按下
 }

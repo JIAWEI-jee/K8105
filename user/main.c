@@ -21,7 +21,7 @@
 #include "PID.h"
 
 #define SKU 8105
-#define SOFT_VER "1.01.00"
+#define SOFT_VER "1.00.00"
 
 
 u16 adc_cnt = 0;
@@ -61,7 +61,7 @@ static void key_handle ( void )
 	}
 	if ( ( key_val == KEY_1_PRES ) && ( calibration_std == 0 ) )
 	{
-		KEY_printf ( " key_scan\r\n" );
+		//KEY_printf ( " key_scan\r\n" );
 		if ( get_device_state() == ON )
 		{
 			set_device_state ( OFF );
@@ -88,7 +88,7 @@ static void key_handle ( void )
 		if ( key_val == KEY_2_PRES )
 		{
 
-			KEY_printf ( " KEY_2_PRES\r\n" );
+			//KEY_printf ( " KEY_2_PRES\r\n" );
 			if ( flash_info.gap < GAP_6 )
 			{
 				flash_info.gap++;
@@ -256,7 +256,7 @@ void temperature_handle ( void )
 		temp = temp_calc ( adc_val1, adc_val2 );
 		//	KEY_printf ( "temp val:%d \r\n",temp );
 		temp =	calibration_temperature ( temp );
-		KEY_printf ( "%d \r\n",temp );
+	//	KEY_printf ( "%d \r\n",temp );
 
 		if ( adc_val1 > 90 )          //adc_val1 > 50
 		{

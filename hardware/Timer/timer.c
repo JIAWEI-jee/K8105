@@ -264,14 +264,13 @@ void TIMER0_Rpt ( void ) interrupt TIMER0_VECTOR
 					Gap_protect_std = 0;
 					On_stay = 0;
 					//ht1621_all_clear(); //定时时间到
-					gm_printf ( "time off \r\n" );
+					//gm_printf ( "time off \r\n" );
 				}
 			}
 			//	gm_printf("time_sec=%d \r\n",time_sec);
 			time_cnt = 0;
 		}
 
-//		  Heat_Operation ( 500 );
 
 	}
 	else if ( calibration_std == 1 )
