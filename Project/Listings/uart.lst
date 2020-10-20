@@ -1,179 +1,181 @@
-C51 COMPILER V9.56.0.0   UART                                                              09/28/2020 15:31:00 PAGE 1   
+C51 COMPILER V9.56.0.0   UART                                                              10/19/2020 14:26:53 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE UART
 OBJECT MODULE PLACED IN .\Objects\uart.obj
 COMPILER INVOKED BY: C:\program_list\keil\C51\BIN\C51.EXE ..\hardware\Uart\uart.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(
                     -..\hardware\DELAY;..\hardware\ADC;..\hardware\Flash;..\hardware\Uart;..\hardware\Key;..\hardware\Pwm;..\hardware\WDT;..\
-                    -hardware\Timer;..\hardware\LCDdisplay;..\hardware\PID) DEBUG OBJECTEXTEND PRINT(.\Listings\uart.lst) TABS(2) OBJECT(.\Ob
-                    -jects\uart.obj)
+                    -hardware\Timer;..\hardware\LCDdisplay;..\hardware\PID;..\hardware\TUYA) DEBUG OBJECTEXTEND PRINT(.\Listings\uart.lst) TA
+                    -BS(2) OBJECT(.\Objects\uart.obj)
 
 line level    source
 
    1          #include "uart.h"
    2          #include "key.h"
-   3          
-   4           volatile u8 usart_rx_buffer[30] = {0};
-   5           volatile u8 usart_rx_cnt;
-   6           u8 usart_rx_flag = 0;
-   7           
-   8          u8 temper_val = 0;
-   9          
+   3          #include "wifi.h"
+   4          
+   5           volatile u8 usart_rx_buffer[30] = {0};
+   6           volatile u8 usart_rx_cnt;
+   7           u8 usart_rx_flag = 0;
+   8           
+   9          u8 temper_val = 0;
   10          
-  11          #define PRODUCTE_CMD_HEADER_VALUE                   0x55
-  12          #define PRODUCTE_CMD_TAIL1_VALUE                    0x0D
-  13          #define PRODUCTE_CMD_TAIL2_VALUE                    0x0A
-  14          
+  11          
+  12          #define PRODUCTE_CMD_HEADER_VALUE                   0x55
+  13          #define PRODUCTE_CMD_TAIL1_VALUE                    0x0D
+  14          #define PRODUCTE_CMD_TAIL2_VALUE                    0x0A
   15          
-  16          struct producte_cmd_struct
-  17          {
-  18              u8 header;
-  19              u8 funcode;
-  20              u8 Data;
-  21              u8 tail1;
-  22              u8 tail2;
-  23          };
-  24          
+  16          
+  17          struct producte_cmd_struct
+  18          {
+  19              u8 header;
+  20              u8 funcode;
+  21              u8 Data;
+  22              u8 tail1;
+  23              u8 tail2;
+  24          };
   25          
   26          
-  27          //初始化串口9600
-  28          void uart_init(void)
-  29          {
-  30   1        #if _DEBUG_PRINTF_
-  31   1        P2M6 =  0xC1;   //P26设置为推挽输出   0xC1
-  32   1        P2M5 = 0x60;    //P25设置为上拉输入 0x60
-  33   1        TXD_MAP = 0x26;   //TXD映射P26
-  34   1        RXD_MAP = 0x25;   //RXD映射P25  
-  35   1        
-  36   1        //波特率计算
-  37   1        //波特率 = 1/16 * (T4时钟源频率 / 定时器4预分频比) / (65536 - 0xFF98)
-  38   1        //       = 1/16 * ((16000000 / 1) / 104)
-  39   1        //     = 9615.38(误差0.16%)
-  40   1      
-  41   1        //波特率9600
-  42   1        //反推初值 = (65536 - ((T4时钟源频率 / 定时器4预分频比) * (1 / 16)) / 波特率)
-  43   1        //       = (65536 - (16000000 * (1 / 16) / 9600))
-  44   1        //       = (65536 - 104.167)
-  45   1        //         = FF98
-  46   1        // TH4 = 0xFF;
-  47   1        // TL4 = 0x98;      //波特率9600
-  48   1        TH4 = 0xFF;//9600  4M 波特率9600
-  49   1        TL4 = 0x98; 
-  50   1        T4CON = 0x06;   //T4工作模式：UART1波特率发生器
-  51   1        SCON2 = 0x02;   //8位UART，波特率可变 方式一
-  52   1        SCON = 0x10;    //允许串行接收
-C51 COMPILER V9.56.0.0   UART                                                              09/28/2020 15:31:00 PAGE 2   
+  27          
+  28          //初始化串口9600
+  29          void uart_init(void)
+  30          {
+  31   1        #if _DEBUG_PRINTF_
+  32   1        P2M6 =  0xC1;   //P26设置为推挽输出   0xC1
+  33   1        P2M5 = 0x60;    //P25设置为上拉输入 0x60
+  34   1        TXD_MAP = 0x26;   //TXD映射P26
+  35   1        RXD_MAP = 0x25;   //RXD映射P25  
+  36   1        
+  37   1        //波特率计算
+  38   1        //波特率 = 1/16 * (T4时钟源频率 / 定时器4预分频比) / (65536 - 0xFF98)
+  39   1        //       = 1/16 * ((16000000 / 1) / 104)
+  40   1        //     = 9615.38(误差0.16%)
+  41   1      
+  42   1        //波特率9600
+  43   1        //反推初值 = (65536 - ((T4时钟源频率 / 定时器4预分频比) * (1 / 16)) / 波特率)
+  44   1        //       = (65536 - (16000000 * (1 / 16) / 9600))
+  45   1        //       = (65536 - 104.167)
+  46   1        //         = FF98
+  47   1        // TH4 = 0xFF;
+  48   1        // TL4 = 0x98;      //波特率9600
+  49   1        TH4 = 0xFF;//9600  4M 波特率9600
+  50   1        TL4 = 0x98; 
+  51   1        T4CON = 0x06;   //T4工作模式：UART1波特率发生器
+  52   1        SCON2 = 0x02;   //8位UART，波特率可变 方式一
+C51 COMPILER V9.56.0.0   UART                                                              10/19/2020 14:26:53 PAGE 2   
 
-  53   1        ES1 = 1;      //使能串口中断
-  54   1        #endif
-  55   1      }
-  56          
+  53   1        SCON = 0x10;    //允许串行接收
+  54   1        ES1 = 1;      //使能串口中断
+  55   1        #endif
+  56   1      }
   57          
-  58          //串口发送一个字符
-  59           void hal_uart_putchar(char Char)
-  60          {
-  61   1        ES1= 0;       //失能UART1中断
-  62   1        SBUF = Char;
-  63   1        while(!TI);
-  64   1        TI = 0;
-  65   1        ES1= 1;       //UART1接收使能
-  66   1      }
-  67          
+  58          
+  59          //串口发送一个字符
+  60           void hal_uart_putchar(char Char)
+  61          {
+  62   1        ES1= 0;       //失能UART1中断
+  63   1        SBUF = Char;
+  64   1        while(!TI);
+  65   1        TI = 0;
+  66   1        ES1= 1;       //UART1接收使能
+  67   1      }
   68          
-  69          /* @function:串口发送一个字节
-  70           * @param:需要发送的字节
-  71           * @return:None
-  72           */
-  73          static void producte_com_send_one_bit(char Data)
-  74          {
-  75   1         hal_uart_putchar(Data);
-  76   1      }
-  77          /* @function:串口发送数组
-  78           * @param:data:数组头指针
-  79           *        len:数组长度
-  80           * @return:None
-  81           */
-  82          static void producte_com_send_data(u8 *Data, u8 len)
-  83          {
-  84   1          u8 i;
-  85   1          for (i = 0; i < len; i++)
-  86   1          {
-  87   2              producte_com_send_one_bit(Data[i]);
-  88   2          }
-  89   1      }
-  90          
-  91          /* @function:发送命令
-  92           * @param:funcode:功能码
-  93           *        data:数据
-  94           * @return:None
-  95           */
-  96           void producte_send_cmd(u8 funcode, u8 Data)
-  97          {
-  98   1          struct producte_cmd_struct cmd_t;
-  99   1          cmd_t.header = PRODUCTE_CMD_HEADER_VALUE;
- 100   1          cmd_t.funcode = funcode;
- 101   1          cmd_t.Data = Data;
- 102   1          cmd_t.tail1 = PRODUCTE_CMD_TAIL1_VALUE;
- 103   1          cmd_t.tail2 = PRODUCTE_CMD_TAIL2_VALUE;
- 104   1          producte_com_send_data((u8 *)&cmd_t, sizeof(struct producte_cmd_struct));
- 105   1      }
- 106          
+  69          
+  70          /* @function:串口发送一个字节
+  71           * @param:需要发送的字节
+  72           * @return:None
+  73           */
+  74          static void producte_com_send_one_bit(char Data)
+  75          {
+  76   1         hal_uart_putchar(Data);
+  77   1      }
+  78          /* @function:串口发送数组
+  79           * @param:data:数组头指针
+  80           *        len:数组长度
+  81           * @return:None
+  82           */
+  83          static void producte_com_send_data(u8 *Data, u8 len)
+  84          {
+  85   1          u8 i;
+  86   1          for (i = 0; i < len; i++)
+  87   1          {
+  88   2              producte_com_send_one_bit(Data[i]);
+  89   2          }
+  90   1      }
+  91          
+  92          /* @function:发送命令
+  93           * @param:funcode:功能码
+  94           *        data:数据
+  95           * @return:None
+  96           */
+  97           void producte_send_cmd(u8 funcode, u8 Data)
+  98          {
+  99   1          struct producte_cmd_struct cmd_t;
+ 100   1          cmd_t.header = PRODUCTE_CMD_HEADER_VALUE;
+ 101   1          cmd_t.funcode = funcode;
+ 102   1          cmd_t.Data = Data;
+ 103   1          cmd_t.tail1 = PRODUCTE_CMD_TAIL1_VALUE;
+ 104   1          cmd_t.tail2 = PRODUCTE_CMD_TAIL2_VALUE;
+ 105   1          producte_com_send_data((u8 *)&cmd_t, sizeof(struct producte_cmd_struct));
+ 106   1      }
  107          
- 108          //重写stdio 中的putchar函数  实现printf
- 109          char putchar(char c)
- 110          {
- 111   1        hal_uart_putchar(c);
- 112   1        return c;
- 113   1      }
- 114          
-C51 COMPILER V9.56.0.0   UART                                                              09/28/2020 15:31:00 PAGE 3   
+ 108          
+ 109          //重写stdio 中的putchar函数  实现printf
+ 110          char putchar(char c)
+ 111          {
+ 112   1        //hal_uart_putchar(c);
+ 113   1        return c;
+ 114   1      }
+C51 COMPILER V9.56.0.0   UART                                                              10/19/2020 14:26:53 PAGE 3   
 
  115          
- 116          void UART1_Rpt(void) interrupt UART1_VECTOR
- 117          {
- 118   1         u8 Data = 0;
- 119   1        if(SCON & 0x01)           //判断接收中断标志位
- 120   1        {
- 121   2          Data = SBUF;        //转存8位串口接收数据  
- 122   2        //  hal_uart_putchar( Data);
- 123   2          SCON &=~ 0x01;                //清除接收中断标志位
- 124   2           /* receive Data */
- 125   2              switch(usart_rx_flag)
- 126   2              {
- 127   3                  case 0:
- 128   3                      if(Data == 0x55)
- 129   3                      {
- 130   4                          usart_rx_buffer[0] = Data;
- 131   4                          usart_rx_cnt++;
- 132   4                        //  putchar( usart_rx_cnt);
- 133   4                          usart_rx_flag = 1;
- 134   4                        // hal_uart_putchar( Data);
- 135   4                        // LED1 = !LED1;
- 136   4                        
- 137   4                      }
- 138   3                      break;
- 139   3                  case 1:
- 140   3            
- 141   3                temper_val = Data;
- 142   3                 //hal_uart_putchar( temper_val);
- 143   3               usart_rx_flag = 2;
- 144   3              
- 145   3                      break;
- 146   3      
- 147   3              }
- 148   2              
- 149   2          
- 150   2          }
- 151   1        }                 
- 152          
- 153          
+ 116          
+ 117          void UART1_Rpt(void) interrupt UART1_VECTOR
+ 118          {
+ 119   1         u8 Data = 0;
+ 120   1        if(SCON & 0x01)           //判断接收中断标志位
+ 121   1        {
+ 122   2          Data = SBUF;        //转存8位串口接收数据  
+ 123   2        //  hal_uart_putchar( Data);
+ 124   2          SCON &=~ 0x01;                //清除接收中断标志位
+ 125   2          uart_receive_input(Data);
+ 126   2           /* receive Data */
+ 127   2              switch(usart_rx_flag)
+ 128   2              {
+ 129   3                  case 0:
+ 130   3                      if(Data == 0x55)
+ 131   3                      {
+ 132   4                          usart_rx_buffer[0] = Data;
+ 133   4                          usart_rx_cnt++;
+ 134   4                        //  putchar( usart_rx_cnt);
+ 135   4                          usart_rx_flag = 1;
+ 136   4                        // hal_uart_putchar( Data);
+ 137   4                        // LED1 = !LED1;
+ 138   4                        
+ 139   4                      }
+ 140   3                      break;
+ 141   3                  case 1:
+ 142   3            
+ 143   3                temper_val = Data;
+ 144   3                 //hal_uart_putchar( temper_val);
+ 145   3               usart_rx_flag = 2;
+ 146   3              
+ 147   3                      break;
+ 148   3      
+ 149   3              }
+ 150   2              
+ 151   2          
+ 152   2          }
+ 153   1        }                 
  154          
+ 155          
+ 156          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    215    ----
+   CODE SIZE        =    259    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =     33       8
+   XDATA SIZE       =     33       9
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

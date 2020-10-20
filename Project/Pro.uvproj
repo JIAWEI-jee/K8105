@@ -311,7 +311,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\hardware\DELAY;..\hardware\ADC;..\hardware\Flash;..\hardware\Uart;..\hardware\Key;..\hardware\Pwm;..\hardware\WDT;..\hardware\Timer;..\hardware\LCDdisplay;..\hardware\PID</IncludePath>
+              <IncludePath>..\hardware\DELAY;..\hardware\ADC;..\hardware\Flash;..\hardware\Uart;..\hardware\Key;..\hardware\Pwm;..\hardware\WDT;..\hardware\Timer;..\hardware\LCDdisplay;..\hardware\PID;..\hardware\TUYA</IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
@@ -427,6 +427,26 @@
               <FileName>PID.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\hardware\PID\PID.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>TUYA</GroupName>
+          <Files>
+            <File>
+              <FileName>mcu_api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\hardware\TUYA\mcu_api.c</FilePath>
+            </File>
+            <File>
+              <FileName>protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\hardware\TUYA\protocol.c</FilePath>
+            </File>
+            <File>
+              <FileName>system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\hardware\TUYA\system.c</FilePath>
             </File>
           </Files>
         </Group>

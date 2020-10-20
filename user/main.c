@@ -19,6 +19,7 @@
 #include "timer.h"
 #include "lcddisplay.h"
 #include "PID.h"
+#include "wifi.h"
 
 #define SKU 8105
 #define SOFT_VER "1.00.00"
@@ -354,7 +355,7 @@ void main()
 	delay_ms ( 600 );
 	lcd_clear_all ();
 	Detection_Input();
-
+    wifi_protocol_init();
 	gm_printf ( "\r\n==================================\r\n" );
 	gm_printf ( "sku:K%d \r\n", ( u16 ) SKU );
 	gm_printf ( "soft version:%s \r\n",SOFT_VER );
@@ -366,11 +367,12 @@ void main()
 	while ( 1 )
 	{
 
-
+         
 		temperature_handle();
 		key_handle ();
 		if (error_std == 0)
 		Heat_Operation ( pwm_set );
+		wifi_uart_service();
 		clear_wdt();
 
 	}

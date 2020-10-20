@@ -1,12 +1,12 @@
-C51 COMPILER V9.56.0.0   FLASH                                                             09/28/2020 15:31:00 PAGE 1   
+C51 COMPILER V9.56.0.0   FLASH                                                             10/19/2020 14:26:53 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE FLASH
 OBJECT MODULE PLACED IN .\Objects\flash.obj
 COMPILER INVOKED BY: C:\program_list\keil\C51\BIN\C51.EXE ..\hardware\Flash\flash.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDI
                     -R(..\hardware\DELAY;..\hardware\ADC;..\hardware\Flash;..\hardware\Uart;..\hardware\Key;..\hardware\Pwm;..\hardware\WDT;.
-                    -.\hardware\Timer;..\hardware\LCDdisplay;..\hardware\PID) DEBUG OBJECTEXTEND PRINT(.\Listings\flash.lst) TABS(2) OBJECT(.
-                    -\Objects\flash.obj)
+                    -.\hardware\Timer;..\hardware\LCDdisplay;..\hardware\PID;..\hardware\TUYA) DEBUG OBJECTEXTEND PRINT(.\Listings\flash.lst)
+                    - TABS(2) OBJECT(.\Objects\flash.obj)
 
 line level    source
 
@@ -62,7 +62,7 @@ line level    source
   50   1        IAP_CMD=0xE11E;         //触发一次操作
   51   1      }
   52          
-C51 COMPILER V9.56.0.0   FLASH                                                             09/28/2020 15:31:00 PAGE 2   
+C51 COMPILER V9.56.0.0   FLASH                                                             10/19/2020 14:26:53 PAGE 2   
 
   53          /**
   54            * @说明   写入任意长度的数据到FLASH里面
@@ -126,7 +126,7 @@ line level    source
  112   1        return 0;
  113   1      }
  114          
-C51 COMPILER V9.56.0.0   FLASH                                                             09/28/2020 15:31:00 PAGE 3   
+C51 COMPILER V9.56.0.0   FLASH                                                             10/19/2020 14:26:53 PAGE 3   
 
  115          
  116          void flash_init(void)
@@ -190,7 +190,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
-C51 COMPILER V9.56.0.0   FLASH                                                             09/28/2020 15:31:00 PAGE 4   
+C51 COMPILER V9.56.0.0   FLASH                                                             10/19/2020 14:26:53 PAGE 4   
 
 END OF MODULE INFORMATION.
 

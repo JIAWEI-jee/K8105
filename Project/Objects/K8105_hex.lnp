@@ -9,6 +9,9 @@
 ".\Objects\wdt.obj",
 ".\Objects\timer.obj",
 ".\Objects\lcddisplay.obj",
-".\Objects\PID.obj" 
+".\Objects\PID.obj",
+".\Objects\mcu_api.obj",
+".\Objects\protocol.obj",
+".\Objects\system.obj" 
 TO ".\Objects\K8105_hex" 
 PRINT(".\Listings\K8105_hex.m51") RAMSIZE(256) 

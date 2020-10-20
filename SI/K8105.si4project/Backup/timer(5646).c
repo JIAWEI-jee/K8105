@@ -1,0 +1,288 @@
+#include "timer.h"
+#include "flash.h"
+#include "uart.h"
+#include "lcddisplay.h"
+#include "key.h"
+#include "adc.h"
+#include "pwm.h"
+#include "PID.h"
+//----------------time---------------
+u16 time_cnt = 0;
+u16 time_sec = 0;
+u16 cnt_heat_time = 0;
+u8 over_rang_time_std = 0;
+u8 Gap_protect_std = 0 ;
+u8 On_stay = 0, pwm_cnt = 0;
+
+u8 Heat_start_std = 0;
+u16 time_heat = 0;
+u16 temp_time = 0,cail_cnt = 0 ;
+u8  heat_step = 0;
+u16 pwm_jishu = 0;
+u16 pwm_set = 0;
+u16 correct_time = 0;
+void Heat_Operation ( u16 temp )
+{
+
+	if ( get_device_state() == ON )
+	{
+
+		if ( Input_Voltage_std == V_12_status )
+		{
+			temp =  temp*2 ;
+		}
+		else if ( Input_Voltage_std == V_24_status )
+		{
+		  temp =  temp/2;
+		}
+		pwm_jishu++;
+		if ( temp > pwm_jishu )
+		{
+			heat_out = 1;
+		}
+		else
+		{
+			heat_out = 0;
+
+		}
+		if ( pwm_jishu == pwm_count )
+		{
+			pwm_jishu =0;
+		}
+
+	}
+}
+
+void PWM_control ( u8 gap )
+{
+  if(heat_step == 1)
+	{
+	 pwm_set = full_pwm_set;
+	}
+else
+{	
+	switch ( gap )
+	{
+		case GAP_1:
+			pwm_set = spid.iPriVal;
+			break;
+		case GAP_2:
+			pwm_set = spid.iPriVal;
+			break;
+		case GAP_3:
+			pwm_set = spid.iPriVal;
+			break;
+		case GAP_4:
+		case GAP_5:
+		case GAP_6:
+			pwm_set = spid.iPriVal;
+			break;
+	}
+}
+}
+
+
+void set_time_sec_val ( u16 sec )
+{
+	time_sec = sec;
+	time_cnt = 0;
+	gm_printf ( "set time second:%d\r\n",sec );
+}
+
+
+void set_correct_time(u8 gap)
+{
+  
+switch ( gap )
+	{
+		case GAP_WARM:
+			correct_time = corrected_time_warm_temp;
+			break;
+		case GAP_1:
+			correct_time = corrected_time_GAP_1_temp;
+			break;
+		case GAP_2:
+			correct_time = corrected_time_GAP_2_temp;
+			break;
+		case GAP_3:
+			correct_time = corrected_time_GAP_3_temp;
+			break;
+		case GAP_4:
+			correct_time = corrected_time_GAP_4_temp;
+			break;
+		case GAP_5:
+			correct_time = corrected_time_GAP_5_temp;
+			break;
+		case GAP_6:
+			correct_time = corrected_time_GAP_6_temp;
+			break;
+		case GAP_7:
+			correct_time = corrected_time_GAP_7_temp;
+			break;
+		case GAP_8:
+			correct_time = corrected_time_GAP_8_temp;
+			break;
+		case GAP_9:
+			correct_time = corrected_time_GAP_9_temp;
+			break;
+
+}
+	}
+
+
+static void set_heat_val ( void )
+{
+	if ( Heat_start_std == 1 )
+	{
+		if ( ++time_heat > correct_time )
+		{
+
+			Heat_start_std = 0;
+			time_heat = 0;
+
+			heat_step = 0;
+		}
+	}
+}
+
+void set_time_sec ( void )
+{
+	time_cnt = 0;
+	if ( flash_info.timer == TIMER_ON )
+	{
+		time_sec = 0;
+		cnt_heat_time = 0;
+		temp_time = 0;
+	}
+	else if ( flash_info.timer == TIMER_0_5H )
+	{
+		time_sec = 30*60;
+		cnt_heat_time = 0;
+		temp_time = 0;
+	}
+	else if ( flash_info.timer == TIMER_1H )
+	{
+		time_sec = 60*60;
+		cnt_heat_time = 0;
+		temp_time = 0;
+	}
+	else if ( flash_info.timer == TIMER_2H )
+	{
+		time_sec = 2*60*60;
+		cnt_heat_time = 0;
+		temp_time = 0;
+	}
+	else if ( flash_info.timer == TIMER_4H )
+	{
+		time_sec = 4*60*60;
+		cnt_heat_time = 0;
+		temp_time = 0;
+	}
+	else if ( flash_info.timer == TIMER_8H )
+	{
+		time_sec = 8*60*60;
+		cnt_heat_time = 0;
+		temp_time = 0;
+	}
+	gm_printf ( "time second:%d \r\n",time_sec );
+}
+
+
+void time0_init ( void )
+{
+	/**********************************TIM0配置初始化**************************************/
+	TCON1 = 0x00;						//Tx0定时器时钟为Fosc/12
+	TMOD = 0x00;						//16位重装载定时器/计数器
+
+	//Tim0计算时间 	= (65536 - 0xFACB) * (1 / (Fosc /Timer分频系数))
+	//				= 1333 / (16000000 / 12)
+	//				= 1 ms
+
+	//定时1ms
+	//反推初值 	= 65536 - ((1/1000) / (1/(Fosc / Timer分频系数)))
+	//		   	= 65536 - ((1/1000) / (1/(16000000 / 12)))
+	//			= 65536 - 1333
+	//			= 0xFACB
+//    TH0 = 0xCB;  10ms
+//	TL0 = 0xEB;
+	TH0 = 0xF5;
+	TL0 = 0x96;							//T0定时时间2ms     0x96     10ms   0xFB
+	IE |= 0x02;							//打开T0中断
+	TCON |= 0x10;						//使能T0
+}
+
+
+
+//10ms
+void TIMER0_Rpt ( void ) interrupt TIMER0_VECTOR
+{
+	if ( get_device_state() == ON ) //flash_info.timer != TIMER_ON &&
+	{
+		time_cnt++;
+		if ( time_cnt >= 500 )
+		{
+			set_heat_val();
+
+			if ( On_stay == 2 )  // stay on 模式下进行保护
+			{
+				cnt_heat_time++;
+				if ( cnt_heat_time > overrang_time )
+				{
+					On_stay = 0;
+					cnt_heat_time = 0;
+					over_rang_time_std = 1;
+					//gm_printf ( "On_stay_overrang \r\n" );
+				}
+
+			}
+			if ( time_sec > 0 )
+			{
+
+				time_sec--;
+				if ( Gap_protect_std == 2 )
+				{
+
+					cnt_heat_time++;
+
+
+					if ( cnt_heat_time > overrang_time )
+					{
+						over_rang_time_std = 1;
+						Gap_protect_std = 0;
+						cnt_heat_time = 0;
+						//gm_printf ( "protect \r\n" );
+					}
+				}
+			}
+			else
+			{
+				if ( flash_info.timer != TIMER_ON )
+				{
+					set_device_state ( OFF );
+					time_sec = 0;
+					cnt_heat_time = 0;
+					Gap_protect_std = 0;
+					On_stay = 0;
+					//ht1621_all_clear(); //定时时间到
+					//gm_printf ( "time off \r\n" );
+				}
+			}
+			//	gm_printf("time_sec=%d \r\n",time_sec);
+			time_cnt = 0;
+		}
+
+
+	}
+	else if ( calibration_std == 1 )
+	{
+		if ( ++cail_cnt > cail_value )
+		{
+			calibration_std = 0;
+			cail_cnt = 0;
+
+		}
+	}
+	LCD_Display();
+
+}
+

@@ -1,12 +1,12 @@
-C51 COMPILER V9.56.0.0   MAIN                                                              09/28/2020 15:30:59 PAGE 1   
+C51 COMPILER V9.56.0.0   MAIN                                                              10/19/2020 14:26:53 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN .\Objects\main.obj
 COMPILER INVOKED BY: C:\program_list\keil\C51\BIN\C51.EXE ..\user\main.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\hardwa
                     -re\DELAY;..\hardware\ADC;..\hardware\Flash;..\hardware\Uart;..\hardware\Key;..\hardware\Pwm;..\hardware\WDT;..\hardware\
-                    -Timer;..\hardware\LCDdisplay;..\hardware\PID) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) TABS(2) OBJECT(.\Objects\mai
-                    -n.obj)
+                    -Timer;..\hardware\LCDdisplay;..\hardware\PID;..\hardware\TUYA) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) TABS(2) OBJ
+                    -ECT(.\Objects\main.obj)
 
 line level    source
 
@@ -31,324 +31,324 @@ line level    source
   19          #include "timer.h"
   20          #include "lcddisplay.h"
   21          #include "PID.h"
-  22          
-  23          #define SKU 8105
-  24          #define SOFT_VER "1.00.00"
-  25          
+  22          #include "wifi.h"
+  23          
+  24          #define SKU 8105
+  25          #define SOFT_VER "1.00.00"
   26          
-  27          u16 adc_cnt = 0;
-  28          u8  first_heat_std = 0;
-  29          u8  error_std = 0;
-  30          
-  31          void Clock ( void );
-  32          void Set_Temp ( void );
-  33          //void Controll_Heat ( void );
-  34          //void Protect ( void );
-  35          void Detection_Input ( void );
-  36          
+  27          
+  28          u16 adc_cnt = 0;
+  29          u8  first_heat_std = 0;
+  30          u8  error_std = 0;
+  31          
+  32          void Clock ( void );
+  33          void Set_Temp ( void );
+  34          //void Controll_Heat ( void );
+  35          //void Protect ( void );
+  36          void Detection_Input ( void );
   37          
   38          
-  39          /***************************************************/
-  40          /*
-  41          函数名称；key_handle()
-  42          函数功能：按键处理函数
-  43          入口参数：null
-  44          出口参数：null
-  45          函数说明；处理按键返回的键值调整相应功能
-  46          */
-  47          /********************************************************/
-  48          
-  49          static void key_handle ( void )
-  50          {
-  51   1        u8 key_val = 0;
-  52   1      
-C51 COMPILER V9.56.0.0   MAIN                                                              09/28/2020 15:30:59 PAGE 2   
+  39          
+  40          /***************************************************/
+  41          /*
+  42          函数名称；key_handle()
+  43          函数功能：按键处理函数
+  44          入口参数：null
+  45          出口参数：null
+  46          函数说明；处理按键返回的键值调整相应功能
+  47          */
+  48          /********************************************************/
+  49          
+  50          static void key_handle ( void )
+  51          {
+  52   1        u8 key_val = 0;
+C51 COMPILER V9.56.0.0   MAIN                                                              10/19/2020 14:26:53 PAGE 2   
 
-  53   1        if ( error_std == 0 )
-  54   1      
-  55   1        {
-  56   2          key_val = key_scan();
-  57   2        }
-  58   1        else
-  59   1        {
-  60   2          key_val = 0;
-  61   2        }
-  62   1        if ( ( key_val == KEY_1_PRES ) && ( calibration_std == 0 ) )
-  63   1        {
-  64   2          //KEY_printf ( " key_scan\r\n" );
-  65   2          if ( get_device_state() == ON )
-  66   2          {
-  67   3            set_device_state ( OFF );
-  68   3      //      set_pwm ( 0 );
-  69   3            heat_out = 0;
-  70   3      
-  71   3          }
-  72   2          else
-  73   2          {
-  74   3            set_device_state ( ON );
-  75   3            set_time_sec();
-  76   3            set_correct_time(flash_info.gap);
-  77   3            Set_Temp ( );
-  78   3            //  gm_printf ( " spid.iSetVal = %d \r\n",  spid.iSetVal);
-  79   3            first_heat_std = 1;
-  80   3      
-  81   3          }
-  82   2        }
-  83   1        else if ( get_device_state() == ON )
-  84   1        {
-  85   2      
+  53   1      
+  54   1        if ( error_std == 0 )
+  55   1      
+  56   1        {
+  57   2          key_val = key_scan();
+  58   2        }
+  59   1        else
+  60   1        {
+  61   2          key_val = 0;
+  62   2        }
+  63   1        if ( ( key_val == KEY_1_PRES ) && ( calibration_std == 0 ) )
+  64   1        {
+  65   2          //KEY_printf ( " key_scan\r\n" );
+  66   2          if ( get_device_state() == ON )
+  67   2          {
+  68   3            set_device_state ( OFF );
+  69   3      //      set_pwm ( 0 );
+  70   3            heat_out = 0;
+  71   3      
+  72   3          }
+  73   2          else
+  74   2          {
+  75   3            set_device_state ( ON );
+  76   3            set_time_sec();
+  77   3            set_correct_time(flash_info.gap);
+  78   3            Set_Temp ( );
+  79   3            //  gm_printf ( " spid.iSetVal = %d \r\n",  spid.iSetVal);
+  80   3            first_heat_std = 1;
+  81   3      
+  82   3          }
+  83   2        }
+  84   1        else if ( get_device_state() == ON )
+  85   1        {
   86   2      
   87   2      
-  88   2          if ( key_val == KEY_2_PRES )
-  89   2          {
-  90   3      
-  91   3            //KEY_printf ( " KEY_2_PRES\r\n" );
-  92   3            if ( flash_info.gap < GAP_6 )
-  93   3            {
-  94   4              flash_info.gap++;
-  95   4      
-  96   4            }
-  97   3            else
-  98   3            {
-  99   4              flash_info.gap = GAP_1;
- 100   4            }
- 101   3      
+  88   2      
+  89   2          if ( key_val == KEY_2_PRES )
+  90   2          {
+  91   3      
+  92   3            //KEY_printf ( " KEY_2_PRES\r\n" );
+  93   3            if ( flash_info.gap < GAP_6 )
+  94   3            {
+  95   4              flash_info.gap++;
+  96   4      
+  97   4            }
+  98   3            else
+  99   3            {
+ 100   4              flash_info.gap = GAP_1;
+ 101   4            }
  102   3      
- 103   3            first_heat_std = 1;
- 104   3            set_correct_time(flash_info.gap);
- 105   3            Set_Temp ( );
- 106   3            //  gm_printf ( " spid.iSetVal = %d \r\n",  spid.iSetVal);
- 107   3            lcd_display_gap ( flash_info.gap );
- 108   3            //set_time_sec();
- 109   3            flah_save_data();
- 110   3          }
- 111   2          else if ( key_val == KEY_3_PRES ) //??
- 112   2          {
- 113   3      
- 114   3            if ( flash_info.timer < 0x05 )
-C51 COMPILER V9.56.0.0   MAIN                                                              09/28/2020 15:30:59 PAGE 3   
+ 103   3      
+ 104   3            first_heat_std = 1;
+ 105   3            set_correct_time(flash_info.gap);
+ 106   3            Set_Temp ( );
+ 107   3            //  gm_printf ( " spid.iSetVal = %d \r\n",  spid.iSetVal);
+ 108   3            lcd_display_gap ( flash_info.gap );
+ 109   3            //set_time_sec();
+ 110   3            flah_save_data();
+ 111   3          }
+ 112   2          else if ( key_val == KEY_3_PRES ) //??
+ 113   2          {
+ 114   3      
+C51 COMPILER V9.56.0.0   MAIN                                                              10/19/2020 14:26:53 PAGE 3   
 
- 115   3            {
- 116   4              flash_info.timer++;
- 117   4            }
- 118   3            else
- 119   3            {
- 120   4              flash_info.timer = TIMER_ON;
- 121   4            }
- 122   3            if ( flash_info.gap > GAP_1 )
- 123   3            {
- 124   4              if ( flash_info.timer == TIMER_ON )
- 125   4              {
- 126   5                On_stay = 2;
- 127   5              }
- 128   4              else if ( flash_info.timer > TIMER_2H )
- 129   4              {
- 130   5                Gap_protect_std = 2;
- 131   5              }
- 132   4            }
- 133   3            //  KEY_printf ( "timer:%d \r\n", ( u16 ) flash_info.timer );
- 134   3            lcd_display_time ( flash_info.timer );
- 135   3            set_time_sec();
- 136   3            flah_save_data();
- 137   3          }
- 138   2        }
- 139   1      }
- 140          
+ 115   3            if ( flash_info.timer < 0x05 )
+ 116   3            {
+ 117   4              flash_info.timer++;
+ 118   4            }
+ 119   3            else
+ 120   3            {
+ 121   4              flash_info.timer = TIMER_ON;
+ 122   4            }
+ 123   3            if ( flash_info.gap > GAP_1 )
+ 124   3            {
+ 125   4              if ( flash_info.timer == TIMER_ON )
+ 126   4              {
+ 127   5                On_stay = 2;
+ 128   5              }
+ 129   4              else if ( flash_info.timer > TIMER_2H )
+ 130   4              {
+ 131   5                Gap_protect_std = 2;
+ 132   5              }
+ 133   4            }
+ 134   3            //  KEY_printf ( "timer:%d \r\n", ( u16 ) flash_info.timer );
+ 135   3            lcd_display_time ( flash_info.timer );
+ 136   3            set_time_sec();
+ 137   3            flah_save_data();
+ 138   3          }
+ 139   2        }
+ 140   1      }
  141          
- 142          u16 calibration_temperature ( u16 temper )
- 143          {
- 144   1        u8 temp1 = 0;
- 145   1        if ( ( usart_rx_flag == 2 ) && ( calibration_std == 1 ) )
- 146   1        {
- 147   2          temp1 = ( u8 ) temper;
- 148   2          usart_rx_flag = 0;
- 149   2          flash_info.correct_std = 1;
- 150   2          if ( temper_val > 15 )
- 151   2          {
- 152   3            if ( temper_val > temp1 )
- 153   3            {
- 154   4              flash_info.correct_value = temper_val - temp1;
- 155   4              flash_info.correct_sign = 1;
- 156   4            }
- 157   3            else
- 158   3            {
- 159   4              flash_info.correct_value = temp1 - temper_val;
- 160   4      
- 161   4              hal_uart_putchar ( flash_info.correct_value );
- 162   4              flash_info.correct_sign = 2;
- 163   4            }
- 164   3            if ( ( flash_info.correct_value < 2 ) || ( flash_info.correct_value > 20 ) )
- 165   3            {
- 166   4              flash_info.correct_value = 0;
- 167   4              flash_info.correct_sign = 0;
- 168   4            }
- 169   3            flah_save_data();
- 170   3            producte_send_cmd ( 0x02, 0x02 );
- 171   3          }
- 172   2        }
- 173   1        if ( flash_info.correct_sign == 1 )
- 174   1        {
- 175   2          return ( ( u16 ) ( temper = temper + flash_info.correct_value ) );
- 176   2        }
-C51 COMPILER V9.56.0.0   MAIN                                                              09/28/2020 15:30:59 PAGE 4   
+ 142          
+ 143          u16 calibration_temperature ( u16 temper )
+ 144          {
+ 145   1        u8 temp1 = 0;
+ 146   1        if ( ( usart_rx_flag == 2 ) && ( calibration_std == 1 ) )
+ 147   1        {
+ 148   2          temp1 = ( u8 ) temper;
+ 149   2          usart_rx_flag = 0;
+ 150   2          flash_info.correct_std = 1;
+ 151   2          if ( temper_val > 15 )
+ 152   2          {
+ 153   3            if ( temper_val > temp1 )
+ 154   3            {
+ 155   4              flash_info.correct_value = temper_val - temp1;
+ 156   4              flash_info.correct_sign = 1;
+ 157   4            }
+ 158   3            else
+ 159   3            {
+ 160   4              flash_info.correct_value = temp1 - temper_val;
+ 161   4      
+ 162   4              hal_uart_putchar ( flash_info.correct_value );
+ 163   4              flash_info.correct_sign = 2;
+ 164   4            }
+ 165   3            if ( ( flash_info.correct_value < 2 ) || ( flash_info.correct_value > 20 ) )
+ 166   3            {
+ 167   4              flash_info.correct_value = 0;
+ 168   4              flash_info.correct_sign = 0;
+ 169   4            }
+ 170   3            flah_save_data();
+ 171   3            producte_send_cmd ( 0x02, 0x02 );
+ 172   3          }
+ 173   2        }
+ 174   1        if ( flash_info.correct_sign == 1 )
+ 175   1        {
+ 176   2          return ( ( u16 ) ( temper = temper + flash_info.correct_value ) );
+C51 COMPILER V9.56.0.0   MAIN                                                              10/19/2020 14:26:53 PAGE 4   
 
- 177   1        else if ( flash_info.correct_sign == 2 )
- 178   1        {
- 179   2          return ( ( u16 ) ( temper = temper - flash_info.correct_value ) );
- 180   2        }
- 181   1        return ( ( u16 ) temper );
- 182   1      
- 183   1      }
- 184          
+ 177   2        }
+ 178   1        else if ( flash_info.correct_sign == 2 )
+ 179   1        {
+ 180   2          return ( ( u16 ) ( temper = temper - flash_info.correct_value ) );
+ 181   2        }
+ 182   1        return ( ( u16 ) temper );
+ 183   1      
+ 184   1      }
  185          
  186          
- 187          u16 temp_calc ( u16 uRt,u16 uRw )
- 188          {
- 189   1        u16 i = 0;
- 190   1        u16 basi_tmp = 40;
- 191   1      
- 192   1        float u1 = 0;
- 193   1        float u3 = 0;
- 194   1        if ( uRt < 90 )
- 195   1        {
- 196   2          return 0xff;
- 197   2        }
- 198   1      
- 199   1        u1 = ( float ) uRt/1000;
- 200   1        u3 =  ( float ) uRw /1000;
- 201   1        u1 = (  u3 - u1 ) / u1 * 750;
- 202   1        if ( u1 < 0 )
- 203   1        {
- 204   2          return 0xff;
- 205   2        }
- 206   1      //  gm_printf ( "R = %f  \r\n",u1 );
- 207   1      
+ 187          
+ 188          u16 temp_calc ( u16 uRt,u16 uRw )
+ 189          {
+ 190   1        u16 i = 0;
+ 191   1        u16 basi_tmp = 40;
+ 192   1      
+ 193   1        float u1 = 0;
+ 194   1        float u3 = 0;
+ 195   1        if ( uRt < 90 )
+ 196   1        {
+ 197   2          return 0xff;
+ 198   2        }
+ 199   1      
+ 200   1        u1 = ( float ) uRt/1000;
+ 201   1        u3 =  ( float ) uRw /1000;
+ 202   1        u1 = (  u3 - u1 ) / u1 * 750;
+ 203   1        if ( u1 < 0 )
+ 204   1        {
+ 205   2          return 0xff;
+ 206   2        }
+ 207   1      //  gm_printf ( "R = %f  \r\n",u1 );
  208   1      
- 209   1        if ( u1 > Temperature_Value )
- 210   1        {
- 211   2          i = ( u1 - Temperature_Value ) /0.4;
- 212   2          //gm_printf("over 40  i:%d \r\n",i);
- 213   2          basi_tmp = basi_tmp + i;
- 214   2        }
- 215   1      
- 216   1        else
- 217   1        {
- 218   2          i = ( Temperature_Value - u1 ) /0.4;
- 219   2          //  gm_printf("under 40  i:%d \r\n",i);
- 220   2          basi_tmp = basi_tmp - i;
- 221   2        }
- 222   1      
- 223   1      //  gm_printf("basi_tmp:%d \r\n",basi_tmp);
- 224   1        if ( flash_info.gap == GAP_3 )
- 225   1        {
- 226   2          basi_tmp = basi_tmp - 5;
- 227   2        }
- 228   1      
- 229   1        return  basi_tmp;
- 230   1      }
- 231          
+ 209   1      
+ 210   1        if ( u1 > Temperature_Value )
+ 211   1        {
+ 212   2          i = ( u1 - Temperature_Value ) /0.4;
+ 213   2          //gm_printf("over 40  i:%d \r\n",i);
+ 214   2          basi_tmp = basi_tmp + i;
+ 215   2        }
+ 216   1      
+ 217   1        else
+ 218   1        {
+ 219   2          i = ( Temperature_Value - u1 ) /0.4;
+ 220   2          //  gm_printf("under 40  i:%d \r\n",i);
+ 221   2          basi_tmp = basi_tmp - i;
+ 222   2        }
+ 223   1      
+ 224   1      //  gm_printf("basi_tmp:%d \r\n",basi_tmp);
+ 225   1        if ( flash_info.gap == GAP_3 )
+ 226   1        {
+ 227   2          basi_tmp = basi_tmp - 5;
+ 228   2        }
+ 229   1      
+ 230   1        return  basi_tmp;
+ 231   1      }
  232          
- 233          /*********************************************************/
- 234          /*
- 235          函数名称；temperature_handle()
- 236          函数功能：温度处理函数
- 237          入口参数：null
- 238          出口参数：null
-C51 COMPILER V9.56.0.0   MAIN                                                              09/28/2020 15:30:59 PAGE 5   
+ 233          
+ 234          /*********************************************************/
+ 235          /*
+ 236          函数名称；temperature_handle()
+ 237          函数功能：温度处理函数
+ 238          入口参数：null
+C51 COMPILER V9.56.0.0   MAIN                                                              10/19/2020 14:26:53 PAGE 5   
 
- 239          函数说明；根据ADC侦测到的值算出温度值，通过温度的值进行温度控制
- 240          */
- 241          /********************************************************/
- 242          
- 243          void temperature_handle ( void )
- 244          {
- 245   1        u16 temp = 0;
- 246   1        u16 adc_val1 = 0,adc_val2 = 0;
- 247   1      
- 248   1        adc_cnt++;
- 249   1      
- 250   1        if ( adc_cnt >= 50000 )
- 251   1        {
- 252   2          adc_cnt = 0;
- 253   2          get_voltage ( &adc_val1,&adc_val2 );
- 254   2      
- 255   2          //  KEY_printf ( "adv1 = %d adv2 =%d \r\n",adc_val1,adc_val2 );  //pjw set
- 256   2          temp = temp_calc ( adc_val1, adc_val2 );
- 257   2          //  KEY_printf ( "temp val:%d \r\n",temp );
- 258   2          temp =  calibration_temperature ( temp );
- 259   2        //  KEY_printf ( "%d \r\n",temp );
- 260   2      
- 261   2          if ( adc_val1 > 90 )          //adc_val1 > 50
- 262   2          {
- 263   3            if ( get_device_state() == ON )
- 264   3            {
- 265   4              lcd_off ( ON );
- 266   4              if ( first_heat_std == 1 )
- 267   4              {
- 268   5                first_heat_std = 0;
- 269   5                if ( temp > 75 )
- 270   5                {
- 271   6                  Heat_start_std = 0;
- 272   6                  heat_step = 0;
- 273   6                  //  KEY_printf ( "first_heat_std heat_step = 0; \r\n" );  //pjw set
- 274   6                }
- 275   5                else
- 276   5                {
- 277   6                  Heat_start_std = 1;
- 278   6                  heat_step = 1;
- 279   6                  //  KEY_printf ( "first_heat_std heat_step = 1; \r\n" );  //pjw set
- 280   6                }
- 281   5              }
- 282   4      
- 283   4              spid.iCurVal = temp*10;
- 284   4              PID_Operation ();
- 285   4              lcd_display_time ( flash_info.timer );
- 286   4              lcd_display_gap ( flash_info.gap );
- 287   4              PWM_control ( flash_info.gap );
- 288   4            }
- 289   3            else
- 290   3            {
- 291   4      
- 292   4              if ( calibration_std == 1 )
- 293   4              {
- 294   5      //          set_pwm ( 0 );
- 295   5              heat_out = 0;
- 296   5      
- 297   5                lcd_clear_all();
- 298   5      
- 299   5                lcd_cailbration ();
- 300   5              }
-C51 COMPILER V9.56.0.0   MAIN                                                              09/28/2020 15:30:59 PAGE 6   
+ 239          出口参数：null
+ 240          函数说明；根据ADC侦测到的值算出温度值，通过温度的值进行温度控制
+ 241          */
+ 242          /********************************************************/
+ 243          
+ 244          void temperature_handle ( void )
+ 245          {
+ 246   1        u16 temp = 0;
+ 247   1        u16 adc_val1 = 0,adc_val2 = 0;
+ 248   1      
+ 249   1        adc_cnt++;
+ 250   1      
+ 251   1        if ( adc_cnt >= 50000 )
+ 252   1        {
+ 253   2          adc_cnt = 0;
+ 254   2          get_voltage ( &adc_val1,&adc_val2 );
+ 255   2      
+ 256   2          //  KEY_printf ( "adv1 = %d adv2 =%d \r\n",adc_val1,adc_val2 );  //pjw set
+ 257   2          temp = temp_calc ( adc_val1, adc_val2 );
+ 258   2          //  KEY_printf ( "temp val:%d \r\n",temp );
+ 259   2          temp =  calibration_temperature ( temp );
+ 260   2        //  KEY_printf ( "%d \r\n",temp );
+ 261   2      
+ 262   2          if ( adc_val1 > 90 )          //adc_val1 > 50
+ 263   2          {
+ 264   3            if ( get_device_state() == ON )
+ 265   3            {
+ 266   4              lcd_off ( ON );
+ 267   4              if ( first_heat_std == 1 )
+ 268   4              {
+ 269   5                first_heat_std = 0;
+ 270   5                if ( temp > 75 )
+ 271   5                {
+ 272   6                  Heat_start_std = 0;
+ 273   6                  heat_step = 0;
+ 274   6                  //  KEY_printf ( "first_heat_std heat_step = 0; \r\n" );  //pjw set
+ 275   6                }
+ 276   5                else
+ 277   5                {
+ 278   6                  Heat_start_std = 1;
+ 279   6                  heat_step = 1;
+ 280   6                  //  KEY_printf ( "first_heat_std heat_step = 1; \r\n" );  //pjw set
+ 281   6                }
+ 282   5              }
+ 283   4      
+ 284   4              spid.iCurVal = temp*10;
+ 285   4              PID_Operation ();
+ 286   4              lcd_display_time ( flash_info.timer );
+ 287   4              lcd_display_gap ( flash_info.gap );
+ 288   4              PWM_control ( flash_info.gap );
+ 289   4            }
+ 290   3            else
+ 291   3            {
+ 292   4      
+ 293   4              if ( calibration_std == 1 )
+ 294   4              {
+ 295   5      //          set_pwm ( 0 );
+ 296   5              heat_out = 0;
+ 297   5      
+ 298   5                lcd_clear_all();
+ 299   5      
+ 300   5                lcd_cailbration ();
+C51 COMPILER V9.56.0.0   MAIN                                                              10/19/2020 14:26:53 PAGE 6   
 
- 301   4              else
- 302   4              {
- 303   5      
- 304   5                lcd_off ( OFF );
- 305   5      //          set_pwm ( 0 );
- 306   5                heat_out = 0;
- 307   5      
- 308   5                lcd_clear_all();
- 309   5      
- 310   5              }
- 311   4      
- 312   4            }
- 313   3            error_std = 0;
- 314   3          }
- 315   2          else
- 316   2          {
- 317   3      
- 318   3            calibration_std = 0;
- 319   3            lcd_off ( Error );
- 320   3            lcd_error (  );
- 321   3            error_std = 1;
- 322   3          }
- 323   2      
+ 301   5              }
+ 302   4              else
+ 303   4              {
+ 304   5      
+ 305   5                lcd_off ( OFF );
+ 306   5      //          set_pwm ( 0 );
+ 307   5                heat_out = 0;
+ 308   5      
+ 309   5                lcd_clear_all();
+ 310   5      
+ 311   5              }
+ 312   4      
+ 313   4            }
+ 314   3            error_std = 0;
+ 315   3          }
+ 316   2          else
+ 317   2          {
+ 318   3      
+ 319   3            calibration_std = 0;
+ 320   3            lcd_off ( Error );
+ 321   3            lcd_error (  );
+ 322   3            error_std = 1;
+ 323   3          }
  324   2      
- 325   2        }
- 326   1      
+ 325   2      
+ 326   2        }
  327   1      
- 328   1      }
- 329          
+ 328   1      
+ 329   1      }
  330          
  331          
  332          
@@ -356,162 +356,164 @@ line level    source
  334          
  335          
  336          
- 337          void main()
- 338          {
- 339   1        Clock();
- 340   1        uart_init();
- 341   1        adc_init();
- 342   1        EA = 1;
- 343   1        time0_init ();            //打开总中断
- 344   1        key_init();
- 345   1        flash_init();
- 346   1        PID_Init();
- 347   1        pwm_init (  );
- 348   1        wdt_init ( 2 );
- 349   1        LCD_Init();
- 350   1        lcd_display_On();
- 351   1        delay_ms ( 1200 );
- 352   1        lcd_display_time ( TIMER_OFF );
- 353   1         lcd_display_gap ( GAP_7 );
- 354   1        delay_ms ( 600 );
- 355   1        lcd_clear_all ();
- 356   1        Detection_Input();
- 357   1      
- 358   1        gm_printf ( "\r\n==================================\r\n" );
- 359   1        gm_printf ( "sku:K%d \r\n", ( u16 ) SKU );
- 360   1        gm_printf ( "soft version:%s \r\n",SOFT_VER );
- 361   1        gm_printf ( "gap %d \r\n", ( u16 ) flash_info.gap );      //档位
- 362   1        gm_printf ( "timer %d \r\n", ( u16 ) flash_info.timer );  // 定时
-C51 COMPILER V9.56.0.0   MAIN                                                              09/28/2020 15:30:59 PAGE 7   
+ 337          
+ 338          void main()
+ 339          {
+ 340   1        Clock();
+ 341   1        uart_init();
+ 342   1        adc_init();
+ 343   1        EA = 1;
+ 344   1        time0_init ();            //打开总中断
+ 345   1        key_init();
+ 346   1        flash_init();
+ 347   1        PID_Init();
+ 348   1        pwm_init (  );
+ 349   1        wdt_init ( 2 );
+ 350   1        LCD_Init();
+ 351   1        lcd_display_On();
+ 352   1        delay_ms ( 1200 );
+ 353   1        lcd_display_time ( TIMER_OFF );
+ 354   1         lcd_display_gap ( GAP_7 );
+ 355   1        delay_ms ( 600 );
+ 356   1        lcd_clear_all ();
+ 357   1        Detection_Input();
+ 358   1          wifi_protocol_init();
+ 359   1        gm_printf ( "\r\n==================================\r\n" );
+ 360   1        gm_printf ( "sku:K%d \r\n", ( u16 ) SKU );
+ 361   1        gm_printf ( "soft version:%s \r\n",SOFT_VER );
+ 362   1        gm_printf ( "gap %d \r\n", ( u16 ) flash_info.gap );      //档位
+C51 COMPILER V9.56.0.0   MAIN                                                              10/19/2020 14:26:53 PAGE 7   
 
- 363   1        gm_printf ( "Input_Voltage_std = %d\r\n",Input_Voltage_std ); //输入电压
- 364   1        gm_printf ( "==================================\r\n" );
- 365   1      
- 366   1        while ( 1 )
- 367   1        {
- 368   2      
+ 363   1        gm_printf ( "timer %d \r\n", ( u16 ) flash_info.timer );  // 定时
+ 364   1        gm_printf ( "Input_Voltage_std = %d\r\n",Input_Voltage_std ); //输入电压
+ 365   1        gm_printf ( "==================================\r\n" );
+ 366   1      
+ 367   1        while ( 1 )
+ 368   1        {
  369   2      
- 370   2          temperature_handle();
- 371   2          key_handle ();
- 372   2          if (error_std == 0)
- 373   2          Heat_Operation ( pwm_set );
- 374   2          clear_wdt();
- 375   2      
- 376   2        }
- 377   1      }
- 378          
- 379          
+ 370   2               
+ 371   2          temperature_handle();
+ 372   2          key_handle ();
+ 373   2          if (error_std == 0)
+ 374   2          Heat_Operation ( pwm_set );
+ 375   2          wifi_uart_service();
+ 376   2          clear_wdt();
+ 377   2      
+ 378   2        }
+ 379   1      }
  380          
- 381          void Clock ( void )
- 382          {
- 383   1        /************************************系统初始化****************************************/
- 384   1        CLKSWR = 0x51;            //选择内部高频RC为系统时钟，内部高频RC 2分频，Fosc=16MHz
- 385   1        CLKDIV = 0x01;            //Fosc 1分频得到Fcpu，Fcpu=16MHz
- 386   1      }
- 387          
- 388          
- 389          /***************************************************/
- 390          /*
- 391          函数名称；Set_Temp()
- 392          函数功能：设定目标温度
- 393          入口参数：null
- 394          出口参数：null
- 395          函数说明；根据不同档位设定要加热到的目标温度
- 396          */
- 397          /********************************************************/
- 398          
- 399          void Set_Temp ( void )
- 400          {
- 401   1      
- 402   1      
- 403   1        switch ( flash_info.gap )
- 404   1        {
- 405   2          case GAP_WARM:
- 406   2      
- 407   2            break;
- 408   2          case GAP_1:
- 409   2            spid.iSetVal = GAP_1_temp*10;
- 410   2            break;
- 411   2          case GAP_2:
- 412   2            spid.iSetVal = GAP_2_temp*10;
- 413   2            break;
- 414   2          case GAP_3:
- 415   2            spid.iSetVal = GAP_3_temp*10;
- 416   2            break;
- 417   2          case GAP_4:
- 418   2            spid.iSetVal = GAP_4_temp*10;
- 419   2            break;
- 420   2          case GAP_5:
- 421   2            spid.iSetVal = GAP_5_temp*10;
- 422   2            break;
- 423   2          case GAP_6:
- 424   2            spid.iSetVal = GAP_6_temp*10;
-C51 COMPILER V9.56.0.0   MAIN                                                              09/28/2020 15:30:59 PAGE 8   
+ 381          
+ 382          
+ 383          void Clock ( void )
+ 384          {
+ 385   1        /************************************系统初始化****************************************/
+ 386   1        CLKSWR = 0x51;            //选择内部高频RC为系统时钟，内部高频RC 2分频，Fosc=16MHz
+ 387   1        CLKDIV = 0x01;            //Fosc 1分频得到Fcpu，Fcpu=16MHz
+ 388   1      }
+ 389          
+ 390          
+ 391          /***************************************************/
+ 392          /*
+ 393          函数名称；Set_Temp()
+ 394          函数功能：设定目标温度
+ 395          入口参数：null
+ 396          出口参数：null
+ 397          函数说明；根据不同档位设定要加热到的目标温度
+ 398          */
+ 399          /********************************************************/
+ 400          
+ 401          void Set_Temp ( void )
+ 402          {
+ 403   1      
+ 404   1      
+ 405   1        switch ( flash_info.gap )
+ 406   1        {
+ 407   2          case GAP_WARM:
+ 408   2      
+ 409   2            break;
+ 410   2          case GAP_1:
+ 411   2            spid.iSetVal = GAP_1_temp*10;
+ 412   2            break;
+ 413   2          case GAP_2:
+ 414   2            spid.iSetVal = GAP_2_temp*10;
+ 415   2            break;
+ 416   2          case GAP_3:
+ 417   2            spid.iSetVal = GAP_3_temp*10;
+ 418   2            break;
+ 419   2          case GAP_4:
+ 420   2            spid.iSetVal = GAP_4_temp*10;
+ 421   2            break;
+ 422   2          case GAP_5:
+ 423   2            spid.iSetVal = GAP_5_temp*10;
+ 424   2            break;
+C51 COMPILER V9.56.0.0   MAIN                                                              10/19/2020 14:26:53 PAGE 8   
 
- 425   2            break;
- 426   2          case GAP_7:
- 427   2            spid.iSetVal = GAP_7_temp*10;
- 428   2            break;
- 429   2          case GAP_8:
- 430   2            spid.iSetVal = GAP_8_temp*10;
- 431   2            break;
- 432   2          case GAP_9:
- 433   2            spid.iSetVal = GAP_9_temp*10;
- 434   2            break;
- 435   2        }
- 436   1      }
- 437          
- 438          /*********************************************************/
- 439          /*
- 440          函数名称；Protect
- 441          入口参数：null
- 442          出口参数：null
- 443          函数说明；大于Gap1档位情况下加热超过2小时会跳到Gap1
- 444          */
- 445          /********************************************************/
- 446          //void Protect ( void )
- 447          //{
- 448          //  if ( over_rang_time_std == 1 )
- 449          //  {
- 450          //    if ( flash_info.gap > GAP_1 )
- 451          //    {
- 452          //      flash_info.gap = GAP_1;
- 453          //      Set_Temp ( );
- 454          //      flah_save_data();
- 455          //      over_rang_time_std = 0;
- 456          //    }
- 457          //  }
- 458          //}
- 459          
- 460          
- 461          void Detection_Input ( void )
- 462          {
- 463   1        u16 input = 0;
- 464   1        input = Detection_Input_Voltage( );
- 465   1        if ( input > 1600 )
- 466   1        {
- 467   2          //gm_printf ( "input24 = %d\r\n" ,input); //输入电压
- 468   2          Input_Voltage_std = V_24_status;
- 469   2        }
- 470   1        else
- 471   1        {
- 472   2          //gm_printf ( "input12 = %d\r\n" ,input); //输入电压
- 473   2          Input_Voltage_std = V_12_status;
- 474   2        }
- 475   1      }
- 476          
+ 425   2          case GAP_6:
+ 426   2            spid.iSetVal = GAP_6_temp*10;
+ 427   2            break;
+ 428   2          case GAP_7:
+ 429   2            spid.iSetVal = GAP_7_temp*10;
+ 430   2            break;
+ 431   2          case GAP_8:
+ 432   2            spid.iSetVal = GAP_8_temp*10;
+ 433   2            break;
+ 434   2          case GAP_9:
+ 435   2            spid.iSetVal = GAP_9_temp*10;
+ 436   2            break;
+ 437   2        }
+ 438   1      }
+ 439          
+ 440          /*********************************************************/
+ 441          /*
+ 442          函数名称；Protect
+ 443          入口参数：null
+ 444          出口参数：null
+ 445          函数说明；大于Gap1档位情况下加热超过2小时会跳到Gap1
+ 446          */
+ 447          /********************************************************/
+ 448          //void Protect ( void )
+ 449          //{
+ 450          //  if ( over_rang_time_std == 1 )
+ 451          //  {
+ 452          //    if ( flash_info.gap > GAP_1 )
+ 453          //    {
+ 454          //      flash_info.gap = GAP_1;
+ 455          //      Set_Temp ( );
+ 456          //      flah_save_data();
+ 457          //      over_rang_time_std = 0;
+ 458          //    }
+ 459          //  }
+ 460          //}
+ 461          
+ 462          
+ 463          void Detection_Input ( void )
+ 464          {
+ 465   1        u16 input = 0;
+ 466   1        input = Detection_Input_Voltage( );
+ 467   1        if ( input > 1600 )
+ 468   1        {
+ 469   2          //gm_printf ( "input24 = %d\r\n" ,input); //输入电压
+ 470   2          Input_Voltage_std = V_24_status;
+ 471   2        }
+ 472   1        else
+ 473   1        {
+ 474   2          //gm_printf ( "input12 = %d\r\n" ,input); //输入电压
+ 475   2          Input_Voltage_std = V_12_status;
+ 476   2        }
+ 477   1      }
+ 478          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1468    ----
+   CODE SIZE        =   1474    ----
    CONSTANT SIZE    =    161    ----
    XDATA SIZE       =      4      23
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
+C51 COMPILER V9.56.0.0   MAIN                                                              10/19/2020 14:26:53 PAGE 9   
+
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
-C51 COMPILER V9.56.0.0   MAIN                                                              09/28/2020 15:30:59 PAGE 9   
-
 END OF MODULE INFORMATION.
 
 

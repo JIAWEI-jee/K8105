@@ -1,5 +1,6 @@
 #include "uart.h"
 #include "key.h"
+#include "wifi.h"
 
  volatile u8 usart_rx_buffer[30] = {0};
  volatile u8 usart_rx_cnt;
@@ -108,7 +109,7 @@ static void producte_com_send_data(u8 *Data, u8 len)
 //重写stdio 中的putchar函数  实现printf
 char putchar(char c)
 {
-	hal_uart_putchar(c);
+	//hal_uart_putchar(c);
 	return c;
 }
 
@@ -121,6 +122,7 @@ void UART1_Rpt(void) interrupt UART1_VECTOR
 		Data = SBUF;				//转存8位串口接收数据	
 	//	hal_uart_putchar( Data);
 		SCON &=~ 0x01;              	//清除接收中断标志位
+		uart_receive_input(Data);
 		 /* receive Data */
         switch(usart_rx_flag)
         {
