@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   UART                                                              10/19/2020 14:26:53 PAGE 1   
+C51 COMPILER V9.56.0.0   UART                                                              11/02/2020 19:34:56 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE UART
@@ -40,7 +40,7 @@ line level    source
   28          //初始化串口9600
   29          void uart_init(void)
   30          {
-  31   1        #if _DEBUG_PRINTF_
+  31   1        //#if _DEBUG_PRINTF_
   32   1        P2M6 =  0xC1;   //P26设置为推挽输出   0xC1
   33   1        P2M5 = 0x60;    //P25设置为上拉输入 0x60
   34   1        TXD_MAP = 0x26;   //TXD映射P26
@@ -62,120 +62,121 @@ line level    source
   50   1        TL4 = 0x98; 
   51   1        T4CON = 0x06;   //T4工作模式：UART1波特率发生器
   52   1        SCON2 = 0x02;   //8位UART，波特率可变 方式一
-C51 COMPILER V9.56.0.0   UART                                                              10/19/2020 14:26:53 PAGE 2   
+C51 COMPILER V9.56.0.0   UART                                                              11/02/2020 19:34:56 PAGE 2   
 
   53   1        SCON = 0x10;    //允许串行接收
-  54   1        ES1 = 1;      //使能串口中断
-  55   1        #endif
+  54   1        IE |= 0x10;             //使能串口中断
+  55   1        //#endif
   56   1      }
   57          
   58          
   59          //串口发送一个字符
   60           void hal_uart_putchar(char Char)
   61          {
-  62   1        ES1= 0;       //失能UART1中断
+  62   1          IE &=~ 0x10;        //失能UART1中断
   63   1        SBUF = Char;
-  64   1        while(!TI);
-  65   1        TI = 0;
-  66   1        ES1= 1;       //UART1接收使能
-  67   1      }
-  68          
+  64   1        while(!(SCON & 0x02));
+  65   1        SCON &=~ 0x02;        //清除发送中断标志位
+  66   1        IE |= 0x10;         //UART1中断使能
+  67   1        SCON |= 0x10;       //UART1接收使能
+  68   1      }
   69          
-  70          /* @function:串口发送一个字节
-  71           * @param:需要发送的字节
-  72           * @return:None
-  73           */
-  74          static void producte_com_send_one_bit(char Data)
-  75          {
-  76   1         hal_uart_putchar(Data);
-  77   1      }
-  78          /* @function:串口发送数组
-  79           * @param:data:数组头指针
-  80           *        len:数组长度
-  81           * @return:None
-  82           */
-  83          static void producte_com_send_data(u8 *Data, u8 len)
-  84          {
-  85   1          u8 i;
-  86   1          for (i = 0; i < len; i++)
-  87   1          {
-  88   2              producte_com_send_one_bit(Data[i]);
-  89   2          }
-  90   1      }
-  91          
-  92          /* @function:发送命令
-  93           * @param:funcode:功能码
-  94           *        data:数据
-  95           * @return:None
-  96           */
-  97           void producte_send_cmd(u8 funcode, u8 Data)
-  98          {
-  99   1          struct producte_cmd_struct cmd_t;
- 100   1          cmd_t.header = PRODUCTE_CMD_HEADER_VALUE;
- 101   1          cmd_t.funcode = funcode;
- 102   1          cmd_t.Data = Data;
- 103   1          cmd_t.tail1 = PRODUCTE_CMD_TAIL1_VALUE;
- 104   1          cmd_t.tail2 = PRODUCTE_CMD_TAIL2_VALUE;
- 105   1          producte_com_send_data((u8 *)&cmd_t, sizeof(struct producte_cmd_struct));
- 106   1      }
- 107          
+  70          
+  71          /* @function:串口发送一个字节
+  72           * @param:需要发送的字节
+  73           * @return:None
+  74           */
+  75          static void producte_com_send_one_bit(char Data)
+  76          {
+  77   1         hal_uart_putchar(Data);
+  78   1      }
+  79          /* @function:串口发送数组
+  80           * @param:data:数组头指针
+  81           *        len:数组长度
+  82           * @return:None
+  83           */
+  84          static void producte_com_send_data(u8 *Data, u8 len)
+  85          {
+  86   1          u8 i;
+  87   1          for (i = 0; i < len; i++)
+  88   1          {
+  89   2              producte_com_send_one_bit(Data[i]);
+  90   2          }
+  91   1      }
+  92          
+  93          /* @function:发送命令
+  94           * @param:funcode:功能码
+  95           *        data:数据
+  96           * @return:None
+  97           */
+  98           void producte_send_cmd(u8 funcode, u8 Data)
+  99          {
+ 100   1          struct producte_cmd_struct cmd_t;
+ 101   1          cmd_t.header = PRODUCTE_CMD_HEADER_VALUE;
+ 102   1          cmd_t.funcode = funcode;
+ 103   1          cmd_t.Data = Data;
+ 104   1          cmd_t.tail1 = PRODUCTE_CMD_TAIL1_VALUE;
+ 105   1          cmd_t.tail2 = PRODUCTE_CMD_TAIL2_VALUE;
+ 106   1          producte_com_send_data((u8 *)&cmd_t, sizeof(struct producte_cmd_struct));
+ 107   1      }
  108          
- 109          //重写stdio 中的putchar函数  实现printf
- 110          char putchar(char c)
- 111          {
- 112   1        //hal_uart_putchar(c);
- 113   1        return c;
- 114   1      }
-C51 COMPILER V9.56.0.0   UART                                                              10/19/2020 14:26:53 PAGE 3   
+ 109          
+ 110          //重写stdio 中的putchar函数  实现printf
+ 111          char putchar(char c)
+ 112          {
+ 113   1        hal_uart_putchar(c);
+ 114   1        return c;
+C51 COMPILER V9.56.0.0   UART                                                              11/02/2020 19:34:56 PAGE 3   
 
- 115          
+ 115   1      }
  116          
- 117          void UART1_Rpt(void) interrupt UART1_VECTOR
- 118          {
- 119   1         u8 Data = 0;
- 120   1        if(SCON & 0x01)           //判断接收中断标志位
- 121   1        {
- 122   2          Data = SBUF;        //转存8位串口接收数据  
- 123   2        //  hal_uart_putchar( Data);
- 124   2          SCON &=~ 0x01;                //清除接收中断标志位
- 125   2          uart_receive_input(Data);
- 126   2           /* receive Data */
- 127   2              switch(usart_rx_flag)
- 128   2              {
- 129   3                  case 0:
- 130   3                      if(Data == 0x55)
- 131   3                      {
- 132   4                          usart_rx_buffer[0] = Data;
- 133   4                          usart_rx_cnt++;
- 134   4                        //  putchar( usart_rx_cnt);
- 135   4                          usart_rx_flag = 1;
- 136   4                        // hal_uart_putchar( Data);
- 137   4                        // LED1 = !LED1;
- 138   4                        
- 139   4                      }
- 140   3                      break;
- 141   3                  case 1:
- 142   3            
- 143   3                temper_val = Data;
- 144   3                 //hal_uart_putchar( temper_val);
- 145   3               usart_rx_flag = 2;
- 146   3              
- 147   3                      break;
- 148   3      
- 149   3              }
- 150   2              
- 151   2          
- 152   2          }
- 153   1        }                 
- 154          
+ 117          
+ 118          void UART1_Rpt(void) interrupt UART1_VECTOR
+ 119          {
+ 120   1         u8 Data = 0;
+ 121   1        if(SCON & 0x01)           //判断接收中断标志位
+ 122   1        {
+ 123   2          Data = SBUF;        //转存8位串口接收数据  
+ 124   2        //  hal_uart_putchar( Data);
+ 125   2          SCON &=~ 0x01;                //清除接收中断标志位
+ 126   2          uart_receive_input(Data);
+ 127   2           /* receive Data */
+ 128   2      //        switch(usart_rx_flag)
+ 129   2      //        {
+ 130   2      //            case 0:
+ 131   2      //                if(Data == 0x55)
+ 132   2      //                {
+ 133   2      //                    usart_rx_buffer[0] = Data;
+ 134   2      //                    usart_rx_cnt++;
+ 135   2      //                    putchar( usart_rx_cnt);
+ 136   2      //                    usart_rx_flag = 1;
+ 137   2      //                   hal_uart_putchar( Data);
+ 138   2      //                   LED1 = !LED1;
+ 139   2      //                  
+ 140   2      //                }
+ 141   2      //                break;
+ 142   2      //            case 1:
+ 143   2      //      
+ 144   2      //          temper_val = Data;
+ 145   2      //           hal_uart_putchar( temper_val);
+ 146   2      //         usart_rx_flag = 2;
+ 147   2      //        
+ 148   2      //                break;
+ 149   2      //
+ 150   2      //        }
+ 151   2              
+ 152   2          
+ 153   2          }
+ 154   1        }                 
  155          
  156          
+ 157          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    259    ----
+   CODE SIZE        =    216    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =     33       9
+   XDATA SIZE       =     33       8
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

@@ -13,14 +13,14 @@ extern  u8 temper_val;
 #if _DEBUG_PRINTF_
 	#define	gm_printf printf
 #else
-	#define	gm_printf (...)
+	#define	gm_printf 
 #endif
 
 
 #if KEY_DEBUG_PRINT
 	#define	KEY_printf printf
 #else
-	#define	KEY_printf (...)
+	#define	KEY_printf 
 #endif
 
 void uart_init(void);

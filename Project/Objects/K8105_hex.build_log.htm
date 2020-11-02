@@ -22,7 +22,7 @@ Dialog DLL:      TP51.DLL V2.59.0.0
  
 <h2>Project:</h2>
 E:\project\K8105\code\debug_code\K8105\Project\Pro.uvproj
-Project File Date:  10/16/2020
+Project File Date:  10/24/2020
 
 <h2>Output:</h2>
 Rebuild target 'Target 1'
@@ -44,6 +44,7 @@ compiling mcu_api.c...
 ..\hardware\TUYA\mcu_api.c(578): warning C280: 'len': unreferenced local variable
 ..\hardware\TUYA\mcu_api.c(590): warning C280: 'len': unreferenced local variable
 compiling protocol.c...
+..\hardware\TUYA\protocol.c(148): warning C209: '_mcu_dp_raw_update': too few actual parameters
 compiling system.c...
 linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
@@ -61,8 +62,6 @@ linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_INT_TO_BYTE?MCU_API
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?_MCU_DP_RAW_UPDATE?MCU_API
-*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_MCU_DP_STRING_UPDATE?MCU_API
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?MCU_GET_RESET_WIFI_FLAG?MCU_API
@@ -76,10 +75,10 @@ linking...
     SEGMENT: ?PR?MCU_GET_WIFI_WORK_STATE?MCU_API
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?MCU_START_WIFITEST?MCU_API
-Program Size: data=15.1 xdata=466 code=16426
+Program Size: data=15.1 xdata=465 code=16708
 creating hex file from ".\Objects\K8105_hex"...
 ".\Objects\K8105_hex" - 0 Error(s), 19 Warning(s).
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>

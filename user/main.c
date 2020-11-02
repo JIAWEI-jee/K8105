@@ -74,7 +74,7 @@ static void key_handle ( void )
 		{
 			set_device_state ( ON );
 			set_time_sec();
-			set_correct_time(flash_info.gap);
+			set_correct_time ( flash_info.gap );
 			Set_Temp ( );
 			//	gm_printf ( " spid.iSetVal = %d \r\n",  spid.iSetVal);
 			first_heat_std = 1;
@@ -102,7 +102,7 @@ static void key_handle ( void )
 
 
 			first_heat_std = 1;
-			set_correct_time(flash_info.gap);
+			set_correct_time ( flash_info.gap );
 			Set_Temp ( );
 			//	gm_printf ( " spid.iSetVal = %d \r\n",  spid.iSetVal);
 			lcd_display_gap ( flash_info.gap );
@@ -257,9 +257,9 @@ void temperature_handle ( void )
 		temp = temp_calc ( adc_val1, adc_val2 );
 		//	KEY_printf ( "temp val:%d \r\n",temp );
 		temp =	calibration_temperature ( temp );
-	//	KEY_printf ( "%d \r\n",temp );
-
-		if ( adc_val1 > 90 )          //adc_val1 > 50
+		//	KEY_printf ( "%d \r\n",temp );
+   // temp = 25;
+		if ( adc_val1 > 90 )          //adc_val1 > 90
 		{
 			if ( get_device_state() == ON )
 			{
@@ -285,7 +285,7 @@ void temperature_handle ( void )
 				PID_Operation ();
 				lcd_display_time ( flash_info.timer );
 				lcd_display_gap ( flash_info.gap );
-        PWM_control ( flash_info.gap );
+				PWM_control ( flash_info.gap );
 			}
 			else
 			{
@@ -293,7 +293,7 @@ void temperature_handle ( void )
 				if ( calibration_std == 1 )
 				{
 //					set_pwm ( 0 );
-				heat_out = 0;
+					heat_out = 0;
 
 					lcd_clear_all();
 
@@ -351,11 +351,11 @@ void main()
 	lcd_display_On();
 	delay_ms ( 1200 );
 	lcd_display_time ( TIMER_OFF );
-	 lcd_display_gap ( GAP_7 );
+	lcd_display_gap ( GAP_7 );
 	delay_ms ( 600 );
 	lcd_clear_all ();
 	Detection_Input();
-    wifi_protocol_init();
+	wifi_protocol_init();
 	gm_printf ( "\r\n==================================\r\n" );
 	gm_printf ( "sku:K%d \r\n", ( u16 ) SKU );
 	gm_printf ( "soft version:%s \r\n",SOFT_VER );
@@ -367,12 +367,14 @@ void main()
 	while ( 1 )
 	{
 
-         
+		wifi_uart_service();
 		temperature_handle();
 		key_handle ();
-		if (error_std == 0)
-		Heat_Operation ( pwm_set );
-		wifi_uart_service();
+		if ( error_std == 0 )
+		{
+			Heat_Operation ( pwm_set );
+		}
+
 		clear_wdt();
 
 	}

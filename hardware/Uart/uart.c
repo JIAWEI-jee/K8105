@@ -28,7 +28,7 @@ struct producte_cmd_struct
 //初始化串口9600
 void uart_init(void)
 {
-	#if _DEBUG_PRINTF_
+	//#if _DEBUG_PRINTF_
 	P2M6 =  0xC1;		//P26设置为推挽输出   0xC1
 	P2M5 = 0x60;		//P25设置为上拉输入 0x60
 	TXD_MAP = 0x26;		//TXD映射P26
@@ -51,19 +51,20 @@ void uart_init(void)
 	T4CON = 0x06;		//T4工作模式：UART1波特率发生器
 	SCON2 = 0x02;		//8位UART，波特率可变 方式一
 	SCON = 0x10;		//允许串行接收
-	ES1 = 1;			//使能串口中断
-	#endif
+	IE |= 0x10;							//使能串口中断
+	//#endif
 }
 
 
 //串口发送一个字符
  void hal_uart_putchar(char Char)
 {
-	ES1= 0;				//失能UART1中断
+    IE &=~ 0x10;				//失能UART1中断
 	SBUF = Char;
-	while(!TI);
-	TI = 0;
-	ES1= 1;				//UART1接收使能
+	while(!(SCON & 0x02));
+	SCON &=~ 0x02;				//清除发送中断标志位
+	IE |= 0x10;					//UART1中断使能
+	SCON |= 0x10;				//UART1接收使能
 }
 
 
@@ -109,7 +110,7 @@ static void producte_com_send_data(u8 *Data, u8 len)
 //重写stdio 中的putchar函数  实现printf
 char putchar(char c)
 {
-	//hal_uart_putchar(c);
+	hal_uart_putchar(c);
 	return c;
 }
 
@@ -124,29 +125,29 @@ void UART1_Rpt(void) interrupt UART1_VECTOR
 		SCON &=~ 0x01;              	//清除接收中断标志位
 		uart_receive_input(Data);
 		 /* receive Data */
-        switch(usart_rx_flag)
-        {
-            case 0:
-                if(Data == 0x55)
-                {
-                    usart_rx_buffer[0] = Data;
-                    usart_rx_cnt++;
-									//  putchar( usart_rx_cnt);
-                    usart_rx_flag = 1;
-									// hal_uart_putchar( Data);
-									// LED1 = !LED1;
-									
-                }
-                break;
-            case 1:
-			
-					temper_val = Data;
-					 //hal_uart_putchar( temper_val);
-				 usart_rx_flag = 2;
-				
-                break;
-
-        }
+//        switch(usart_rx_flag)
+//        {
+//            case 0:
+//                if(Data == 0x55)
+//                {
+//                    usart_rx_buffer[0] = Data;
+//                    usart_rx_cnt++;
+//									  putchar( usart_rx_cnt);
+//                    usart_rx_flag = 1;
+//									 hal_uart_putchar( Data);
+//									 LED1 = !LED1;
+//									
+//                }
+//                break;
+//            case 1:
+//			
+//					temper_val = Data;
+//					 hal_uart_putchar( temper_val);
+//				 usart_rx_flag = 2;
+//				
+//                break;
+//
+//        }
 				
 		
     }
