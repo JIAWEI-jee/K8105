@@ -6,6 +6,8 @@ extern u8 calibration_std;
 #define KEY_1 	P0_1
 #define KEY_2 	P2_7
 #define KEY_3 	P0_0
+#define LED_IO  P2_0
+#define LED_STAY_ON         4
 
 #define Insert_Test P0_2
 

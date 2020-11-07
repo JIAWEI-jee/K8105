@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 1   
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MCU_API
@@ -62,7 +62,7 @@ line level    source
   50   1      }
   51          
   52          /**
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 2   
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 2   
 
   53           * @brief  求字符串长度
   54           * @param[in] {str} 字符串地址
@@ -126,7 +126,7 @@ line level    source
  112   3                  pdest[i] = psrc[i];  
  113   3              }  
  114   2          }else {
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 3   
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 3   
 
  115   2              for(i = count; i > 0; i --) {  
  116   3                  pdest[i - 1] = psrc[i - 1];  
@@ -190,7 +190,7 @@ line level    source
  174           * @return 合并完成后的32bit变量
  175           */
  176          unsigned long byte_to_int(const unsigned char value[4])
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 4   
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 4   
 
  177          {
  178   1          unsigned long nubmer = 0;
@@ -254,7 +254,7 @@ line level    source
  236   1          send_len = set_wifi_uart_byte(send_len,0);
  237   1          send_len = set_wifi_uart_byte(send_len,1);
  238   1          //
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 5   
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 5   
 
  239   1          if(value == FALSE) {
  240   2              send_len = set_wifi_uart_byte(send_len,FALSE);
@@ -318,7 +318,7 @@ line level    source
  298   1          send_len = set_wifi_uart_byte(send_len,len / 0x100);
  299   1          send_len = set_wifi_uart_byte(send_len,len % 0x100);
  300   1          //
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 6   
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 6   
 
  301   1          send_len = set_wifi_uart_buffer(send_len,(unsigned char *)value,len);
  302   1          
@@ -382,7 +382,7 @@ line level    source
  360   2              send_len = set_wifi_uart_byte(send_len,value & 0xff);
  361   2          }else {
  362   2              send_len = set_wifi_uart_byte(send_len,4);
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 7   
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 7   
 
  363   2              send_len = set_wifi_uart_byte(send_len,value >> 24);
  364   2              send_len = set_wifi_uart_byte(send_len,value >> 16);
@@ -446,7 +446,7 @@ line level    source
                   //
                   if(value == FALSE) {
                       send_len = set_wifi_uart_byte(send_len,FALSE);
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 8   
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 8   
 
                   }else {
                       send_len = set_wifi_uart_byte(send_len,1);
@@ -510,7 +510,7 @@ line level    source
                   //
                   send_len = set_wifi_uart_buffer(send_len,(unsigned char *)value,len);
                   
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 9   
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 9   
 
                   wifi_uart_write_frame(STATE_UPLOAD_SYN_CMD,MCU_TX_VER,send_len);
                   
@@ -574,7 +574,7 @@ line level    source
                       send_len = set_wifi_uart_byte(send_len,4);
                       send_len = set_wifi_uart_byte(send_len,value >> 24);
                       send_len = set_wifi_uart_byte(send_len,value >> 16);
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 10  
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 10  
 
                       send_len = set_wifi_uart_byte(send_len,value >> 8);
                       send_len = set_wifi_uart_byte(send_len,value & 0xff);
@@ -638,7 +638,7 @@ line level    source
  604   1      
  605   1        
  606   1      
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 11  
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 11  
 
  607   1          if(1 == rx_buf_out - rx_buf_in) {
  608   2              //串口接收缓存已满
@@ -702,7 +702,7 @@ line level    source
  665   3                  break;
  666   3              }
  667   2              
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 12  
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 12  
 
  668   2              //数据接收完成
  669   2              if(get_check_sum((unsigned char *)wifi_data_process_buf + offset,rx_value_len - 1) != wifi_data_pr
@@ -766,7 +766,7 @@ line level    source
  725           *         2:如果为模块自处理模式,MCU无须调用该函数
  726           */
  727          void mcu_reset_wifi(void)
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 13  
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 13  
 
  728          {
  729   1          reset_wifi_flag = RESET_WIFI_ERROR;
@@ -830,7 +830,7 @@ line level    source
  786          #endif
  787          
  788          #ifdef SUPPORT_GREEN_TIME
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 14  
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 14  
 
               /**
                * @brief  MCU获取格林时间
@@ -894,7 +894,7 @@ line level    source
               {
                   wifi_uart_write_frame(GET_WIFI_STATUS_CMD, MCU_TX_VER, 0);
               }
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 15  
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 15  
 
               #endif
  852          
@@ -958,7 +958,7 @@ line level    source
                   
                   return SUCCESS;
               }
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 16  
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 16  
 
               
               /**
@@ -1022,7 +1022,7 @@ line level    source
                       /*  如果MCU不支持多进程或多线程，使用此函数时每次只发一包（数据长度�
              -��大于STREM_PACK_LEN），
                       发送完之后在 maps_stream_trans_send_result 函数中处理模块返回的结果，发送成�
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 17  
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 17  
 
              -��时再次调用此函数发送下一包，注意包偏移要增加  */
                   }
@@ -1086,7 +1086,7 @@ line level    source
               #endif
 1026          
 1027          #ifdef MODULE_EXPANDING_SERVICE_ENABLE
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 18  
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 18  
 
               /**
                * @brief  打开模块时间服务通知
@@ -1150,7 +1150,7 @@ line level    source
               /**
                * @brief  获取语音状态码
                * @param  Null
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 19  
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 19  
 
                * @return Null
                * @note   MCU需要自行调用该功能
@@ -1214,7 +1214,7 @@ line level    source
                * @return Null
                * @note   MCU需要自行调用该功能
                */
-C51 COMPILER V9.56.0.0   MCU_API                                                           11/02/2020 19:34:57 PAGE 20  
+C51 COMPILER V9.56.0.0   MCU_API                                                           11/07/2020 10:13:48 PAGE 20  
 
               void voice_awaken_test(void)
               {

@@ -9,7 +9,7 @@ void key_init(void)
 	P2M7 = 0x60;                        //P27设置为非施密特数字带上拉输入
 	P0M0 = 0x60;                        //P00设置为非施密特数字带上拉输入
 	P0M1 = 0x60;                        //P01设置为非施密特数字带上拉输入
-	
+	P2M0 = 0xC0;                        //P20设置为推挽输出 20mA  
 }
 
 
@@ -154,8 +154,13 @@ u8 key_scan(void)
 
 	if(key_driver() == KEY_1_LONG)
 	{
-		  //KEY_printf("LONG_KEY\r\n");
 			return KEY_1_PRES;
+	}
+	else if ( key_up && ( KEY_1 == 0 ) )
+	{
+		delay_ms ( 50 );
+		key_up=0;
+		return LED_STAY_ON;
 	}
 if(Calibration_key_driver() ==  KEY_CALI2_LONG)
 	{
@@ -184,10 +189,9 @@ if(Calibration_key_driver() ==  KEY_CALI2_LONG)
 			//KEY_printf("TIME_KEY\r\n");
 			return KEY_3_PRES;
 		}
-	}else if(KEY_2 == 1 && KEY_3 == 1)
-		key_up=1; 	
-
-//	if(KEY_1 == 1 && key_pres_time > 1)
-//		key_pres_time = 0;
+	}else if ( ( KEY_2 == 1 ) && ( KEY_3 == 1 ) && ( KEY_1 == 1 ) )
+	{
+		key_up=1;
+	}
  	return 0;// 无按键按下
 }

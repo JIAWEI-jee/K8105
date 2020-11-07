@@ -66,6 +66,7 @@ static void key_handle ( void )
 		if ( get_device_state() == ON )
 		{
 			set_device_state ( OFF );
+            led_set_off(); 
 //			set_pwm ( 0 );
 			heat_out = 0;
 
@@ -78,19 +79,24 @@ static void key_handle ( void )
 			Set_Temp ( );
 			//	gm_printf ( " spid.iSetVal = %d \r\n",  spid.iSetVal);
 			first_heat_std = 1;
-
+      led_set_on();
 		}
 	}
 	else if ( get_device_state() == ON )
 	{
 
+   if ( key_val == LED_STAY_ON )
+		{
+//		 	KEY_printf ( " KEY_led_PRES\r\n" );
+			led_set_on();
+		}
 
 
 		if ( key_val == KEY_2_PRES )
 		{
-
-			//KEY_printf ( " KEY_2_PRES\r\n" );
-			if ( flash_info.gap < GAP_6 )
+       led_set_on();
+//			KEY_printf ( " KEY_2_PRES\r\n" );
+			if ( flash_info.gap < GAP_H )
 			{
 				flash_info.gap++;
 
@@ -111,7 +117,7 @@ static void key_handle ( void )
 		}
 		else if ( key_val == KEY_3_PRES ) //??
 		{
-
+      led_set_on();
 			if ( flash_info.timer < 0x05 )
 			{
 				flash_info.timer++;
@@ -353,6 +359,7 @@ void main()
 	lcd_display_time ( TIMER_OFF );
 	lcd_display_gap ( GAP_7 );
 	delay_ms ( 600 );
+	led_set_off();
 	lcd_clear_all ();
 	Detection_Input();
 	wifi_protocol_init();

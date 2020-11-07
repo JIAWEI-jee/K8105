@@ -1,6 +1,7 @@
 #include "lcddisplay.h"
 #include "flash.h"
 #include "key.h"
+#include "timer.h"
 
 display_set lcd_set = {0,0};
 
@@ -45,12 +46,14 @@ void lcd_error ( void )
 		
 		lcd_set.gap_display = Clear_lcd;
 		lcd_set.time_display = Clear_lcd;
+		led_set_off();
 		error_std = 1;
 	}
 	else if ( error_std == 1 )
 	{
 		
 		lcd_set.gap_display = Error;
+		led_set_on();
 		error_std = 0;
 	}
 

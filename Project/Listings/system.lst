@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   SYSTEM                                                            11/02/2020 19:34:58 PAGE 1   
+C51 COMPILER V9.56.0.0   SYSTEM                                                            11/07/2020 10:13:48 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE SYSTEM
@@ -62,7 +62,7 @@ line level    source
   50   1          
   51   1          my_memcpy(obj,src,len);
   52   1          
-C51 COMPILER V9.56.0.0   SYSTEM                                                            11/02/2020 19:34:58 PAGE 2   
+C51 COMPILER V9.56.0.0   SYSTEM                                                            11/07/2020 10:13:48 PAGE 2   
 
   53   1          dest += len;
   54   1          return dest;
@@ -126,7 +126,7 @@ line level    source
  112   1          check_sum = get_check_sum((unsigned char *)wifi_uart_tx_buf, len - 1);
  113   1          wifi_uart_tx_buf[len - 1] = check_sum;
  114   1          
-C51 COMPILER V9.56.0.0   SYSTEM                                                            11/02/2020 19:34:58 PAGE 3   
+C51 COMPILER V9.56.0.0   SYSTEM                                                            11/07/2020 10:13:48 PAGE 3   
 
  115   1          wifi_uart_write_data((unsigned char *)wifi_uart_tx_buf, len);
  116   1      }
@@ -190,7 +190,7 @@ line level    source
  172   1          
  173   1          wifi_uart_write_frame(PRODUCT_INFO_CMD, MCU_TX_VER, length);
  174   1      }
-C51 COMPILER V9.56.0.0   SYSTEM                                                            11/02/2020 19:34:58 PAGE 4   
+C51 COMPILER V9.56.0.0   SYSTEM                                                            11/07/2020 10:13:48 PAGE 4   
 
  175          
  176          /**
@@ -254,7 +254,7 @@ line level    source
  234   2              //错误提示
  235   2              return FALSE;
  236   2          }else {
-C51 COMPILER V9.56.0.0   SYSTEM                                                            11/02/2020 19:34:58 PAGE 5   
+C51 COMPILER V9.56.0.0   SYSTEM                                                            11/07/2020 10:13:48 PAGE 5   
 
  237   2              ret = dp_download_handle(dp_id,value + 4,dp_len);
  238   2          }
@@ -318,7 +318,7 @@ line level    source
                   }
               }
               #endif
-C51 COMPILER V9.56.0.0   SYSTEM                                                            11/02/2020 19:34:58 PAGE 6   
+C51 COMPILER V9.56.0.0   SYSTEM                                                            11/07/2020 10:13:48 PAGE 6   
 
  299          
  300          #ifdef WIFI_STREAM_ENABLE
@@ -382,7 +382,7 @@ line level    source
               
                   //地图服务协议版本
                   send_len = set_wifi_uart_byte(send_len, pro_ver);
-C51 COMPILER V9.56.0.0   SYSTEM                                                            11/02/2020 19:34:58 PAGE 7   
+C51 COMPILER V9.56.0.0   SYSTEM                                                            11/07/2020 10:13:48 PAGE 7   
 
                   
                   //地图流服务会话ID
@@ -446,7 +446,7 @@ line level    source
                   static unsigned char file_download_flag = 0;                                //文件下载标志
                   unsigned int file_download_size = 0;
               #endif
-C51 COMPILER V9.56.0.0   SYSTEM                                                            11/02/2020 19:34:58 PAGE 8   
+C51 COMPILER V9.56.0.0   SYSTEM                                                            11/07/2020 10:13:48 PAGE 8   
 
  419   1      
  420   1          switch(cmd_type)
@@ -510,7 +510,7 @@ line level    source
  475   2                  all_data_update();                               
  476   2              break;
  477   2          
-C51 COMPILER V9.56.0.0   SYSTEM                                                            11/02/2020 19:34:58 PAGE 9   
+C51 COMPILER V9.56.0.0   SYSTEM                                                            11/07/2020 10:13:48 PAGE 9   
 
  478   2      #ifdef SUPPORT_MCU_FIRM_UPDATE
                       case UPDATE_START_CMD:                                  //升级开始
@@ -574,7 +574,7 @@ line level    source
                           }
                       break;
               #endif      
-C51 COMPILER V9.56.0.0   SYSTEM                                                            11/02/2020 19:34:58 PAGE 10  
+C51 COMPILER V9.56.0.0   SYSTEM                                                            11/07/2020 10:13:48 PAGE 10  
 
  539   2      
  540   2      #ifdef SUPPORT_GREEN_TIME
@@ -638,7 +638,7 @@ line level    source
  595   2      
  596   2      #ifdef GET_WIFI_STATUS_ENABLE
                       case GET_WIFI_STATUS_CMD:                               //获取当前wifi联网状态
-C51 COMPILER V9.56.0.0   SYSTEM                                                            11/02/2020 19:34:58 PAGE 11  
+C51 COMPILER V9.56.0.0   SYSTEM                                                            11/07/2020 10:13:48 PAGE 11  
 
                           result = wifi_data_process_buf[offset + DATA_START];
                           get_wifi_status(result);
@@ -702,7 +702,7 @@ line level    source
                               dp_len <<= 8;
                               dp_len |= wifi_data_process_buf[offset + DATA_START + 3];
                     
-C51 COMPILER V9.56.0.0   SYSTEM                                                            11/02/2020 19:34:58 PAGE 12  
+C51 COMPILER V9.56.0.0   SYSTEM                                                            11/07/2020 10:13:48 PAGE 12  
 
                               file_data_addr = (unsigned char *)wifi_data_process_buf;
                               file_data_addr += (offset + DATA_START + 4);
@@ -766,7 +766,7 @@ line level    source
                           result = wifi_data_process_buf[offset + DATA_START];
                           voice_awaken_test_result(result);
                       break;
-C51 COMPILER V9.56.0.0   SYSTEM                                                            11/02/2020 19:34:58 PAGE 13  
+C51 COMPILER V9.56.0.0   SYSTEM                                                            11/07/2020 10:13:48 PAGE 13  
 
                       case VOICE_EXTEND_FUN_CMD:                              //语音模组扩展功能
                           total_len = (wifi_data_process_buf[offset + LENGTH_HIGH] << 8) | wifi_data_process_buf[offset 

@@ -2,6 +2,7 @@
 #define _LCDDISPLAY_H
 #include "HC89F3541.H"
 
+
 #define COM0    P1_2
 #define COM1    P1_1
 #define COM2    P2_3
