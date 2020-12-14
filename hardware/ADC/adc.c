@@ -19,7 +19,7 @@ void adc_init ( void )
 	delay_us ( 80 );						//延时20us，确保ADC系统稳定
 
 //	ADCC1 = 0x08;						//选择ADC通道8
-	ADCC2 = 0x49;;						//转换结果12位数据，数据右对齐，ADC时钟4分频 4M/4 = 1MHz
+	ADCC2 = 0x49;						//转换结果12位数据，数据右对齐，ADC时钟4分频 4M/4 = 1MHz
 }
 
 u16 get_adc_val_P07 ( void )
@@ -30,6 +30,7 @@ u16 get_adc_val_P07 ( void )
 	while ( ! ( ADCC0&0x20 ) );			//等待ADC转换结束
 	ADCC0 &=~ 0x20;					//清除标志位
 	adc_val = ADCR;					//获取ADC的值
+//	delay_us ( 20 );
 //	ADCR = 0;
 	return adc_val;
 }
@@ -42,6 +43,7 @@ u16 get_adc_val_P03 ( void )
 	while ( ! ( ADCC0&0x20 ) );			//等待ADC转换结束
 	ADCC0 &=~ 0x20;					//清除标志位
 	adc_val = ADCR;					//获取ADC的值
+//	delay_us ( 20 );
 //	ADCR = 0;
 	return adc_val;
 }
@@ -54,6 +56,7 @@ u16 get_adc_val_P02 ( void )
 	while ( ! ( ADCC0&0x20 ) );			//等待ADC转换结束
 	ADCC0 &=~ 0x20;					//清除标志位
 	adc_val = ADCR;					//获取ADC的值
+//	delay_us ( 20 );
 //	ADCR = 0;
 	return adc_val;
 }

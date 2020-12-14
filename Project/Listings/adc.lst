@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   ADC                                                               09/28/2020 15:30:59 PAGE 1   
+C51 COMPILER V9.56.0.0   ADC                                                               11/24/2020 14:40:58 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE ADC
@@ -31,7 +31,7 @@ line level    source
   19   1        delay_us ( 80 );            //延时20us，确保ADC系统稳定
   20   1      
   21   1      //  ADCC1 = 0x08;           //选择ADC通道8
-  22   1        ADCC2 = 0x49;;            //转换结果12位数据，数据右对齐，ADC时钟4分频 4M/4 = 1MHz
+  22   1        ADCC2 = 0x49;           //转换结果12位数据，数据右对齐，ADC时钟4分频 4M/4 = 1MHz
   23   1      }
   24          
   25          u16 get_adc_val_P07 ( void )
@@ -42,95 +42,98 @@ line level    source
   30   1        while ( ! ( ADCC0&0x20 ) );     //等待ADC转换结束
   31   1        ADCC0 &=~ 0x20;         //清除标志位
   32   1        adc_val = ADCR;         //获取ADC的值
-  33   1      //  ADCR = 0;
-  34   1        return adc_val;
-  35   1      }
-  36          
-  37          u16 get_adc_val_P03 ( void )
-  38          {
-  39   1        u16 adc_val = 0;
-  40   1        ADCC1 = 0x03;           //选择ADC通道0
-  41   1        ADCC0 |= 0x40;          //启动ADC转换
-  42   1        while ( ! ( ADCC0&0x20 ) );     //等待ADC转换结束
-  43   1        ADCC0 &=~ 0x20;         //清除标志位
-  44   1        adc_val = ADCR;         //获取ADC的值
-  45   1      //  ADCR = 0;
-  46   1        return adc_val;
-  47   1      }
-  48          
-  49          u16 get_adc_val_P02 ( void )
-  50          {
-  51   1        u16 adc_val = 0;
-  52   1        ADCC1 = 0x02;           //选择ADC通道2
-C51 COMPILER V9.56.0.0   ADC                                                               09/28/2020 15:30:59 PAGE 2   
+  33   1      //  delay_us ( 20 );
+  34   1      //  ADCR = 0;
+  35   1        return adc_val;
+  36   1      }
+  37          
+  38          u16 get_adc_val_P03 ( void )
+  39          {
+  40   1        u16 adc_val = 0;
+  41   1        ADCC1 = 0x03;           //选择ADC通道0
+  42   1        ADCC0 |= 0x40;          //启动ADC转换
+  43   1        while ( ! ( ADCC0&0x20 ) );     //等待ADC转换结束
+  44   1        ADCC0 &=~ 0x20;         //清除标志位
+  45   1        adc_val = ADCR;         //获取ADC的值
+  46   1      //  delay_us ( 20 );
+  47   1      //  ADCR = 0;
+  48   1        return adc_val;
+  49   1      }
+  50          
+  51          u16 get_adc_val_P02 ( void )
+  52          {
+C51 COMPILER V9.56.0.0   ADC                                                               11/24/2020 14:40:58 PAGE 2   
 
-  53   1        ADCC0 |= 0x40;          //启动ADC转换
-  54   1        while ( ! ( ADCC0&0x20 ) );     //等待ADC转换结束
-  55   1        ADCC0 &=~ 0x20;         //清除标志位
-  56   1        adc_val = ADCR;         //获取ADC的值
-  57   1      //  ADCR = 0;
-  58   1        return adc_val;
-  59   1      }
-  60          
-  61          void get_voltage ( u16* u1_voltage,u16* u3_voltage )
-  62          {
-  63   1        u32 temp = 0;
-  64   1        u8  i = 0;
-  65   1        
-  66   1        for ( i=0; i<5; i++ )
-  67   1        {
-  68   2          temp+=get_adc_val_P03();
-  69   2        }
-  70   1        temp/=5;
-  71   1        *u1_voltage = temp*4000/4095;
-  72   1        
-  73   1        delay_us ( 20 );
-  74   1        temp = 0;
-  75   1        for ( i=0; i<5; i++ )
-  76   1        {
-  77   2          temp+=get_adc_val_P07();
-  78   2        }
-  79   1        temp/=5;
-  80   1        *u3_voltage = temp*4000/4095;
-  81   1        
-  82   1      }
-  83          
-  84          u16 Detection_Input_Voltage(void)
-  85          {
-  86   1         
-  87   1        u32 tep = 0;
-  88   1        u8 i = 0;
-  89   1      
-  90   1        for ( i = 0; i < 5; i++ )
-  91   1        {
-  92   2          tep += get_adc_val_P02();
-  93   2        }
-  94   1        tep /= 5;
-  95   1        tep = tep*4000/4096;  //放大1000倍 保存小数点后三位 4096
-  96   1      
-  97   1        return tep;
-  98   1      }
-  99          
- 100          //u16 get_voltage_val ( void )
- 101          //{
- 102          //  u32 tep = 0;
- 103          //  u8 i = 0;
- 104          //
- 105          //  for ( i = 0; i < 5; i++ )
- 106          //  {
- 107          //    tep += get_adc_val();
- 108          //  }
- 109          //  tep /= 5;
- 110          //  tep = tep*4000/4096;  //放大1000倍 保存小数点后三位 4096
- 111          //  return tep;
- 112          //}
- 113          
- 114          
-C51 COMPILER V9.56.0.0   ADC                                                               09/28/2020 15:30:59 PAGE 3   
+  53   1        u16 adc_val = 0;
+  54   1        ADCC1 = 0x02;           //选择ADC通道2
+  55   1        ADCC0 |= 0x40;          //启动ADC转换
+  56   1        while ( ! ( ADCC0&0x20 ) );     //等待ADC转换结束
+  57   1        ADCC0 &=~ 0x20;         //清除标志位
+  58   1        adc_val = ADCR;         //获取ADC的值
+  59   1      //  delay_us ( 20 );
+  60   1      //  ADCR = 0;
+  61   1        return adc_val;
+  62   1      }
+  63          
+  64          void get_voltage ( u16* u1_voltage,u16* u3_voltage )
+  65          {
+  66   1        u32 temp = 0;
+  67   1        u8  i = 0;
+  68   1        
+  69   1        for ( i=0; i<5; i++ )
+  70   1        {
+  71   2          temp+=get_adc_val_P03();
+  72   2        }
+  73   1        temp/=5;
+  74   1        *u1_voltage = temp*4000/4095;
+  75   1        
+  76   1        delay_us ( 20 );
+  77   1        temp = 0;
+  78   1        for ( i=0; i<5; i++ )
+  79   1        {
+  80   2          temp+=get_adc_val_P07();
+  81   2        }
+  82   1        temp/=5;
+  83   1        *u3_voltage = temp*4000/4095;
+  84   1        
+  85   1      }
+  86          
+  87          u16 Detection_Input_Voltage(void)
+  88          {
+  89   1         
+  90   1        u32 tep = 0;
+  91   1        u8 i = 0;
+  92   1      
+  93   1        for ( i = 0; i < 5; i++ )
+  94   1        {
+  95   2          tep += get_adc_val_P02();
+  96   2        }
+  97   1        tep /= 5;
+  98   1        tep = tep*4000/4096;  //放大1000倍 保存小数点后三位 4096
+  99   1      
+ 100   1        return tep;
+ 101   1      }
+ 102          
+ 103          //u16 get_voltage_val ( void )
+ 104          //{
+ 105          //  u32 tep = 0;
+ 106          //  u8 i = 0;
+ 107          //
+ 108          //  for ( i = 0; i < 5; i++ )
+ 109          //  {
+ 110          //    tep += get_adc_val();
+ 111          //  }
+ 112          //  tep /= 5;
+ 113          //  tep = tep*4000/4096;  //放大1000倍 保存小数点后三位 4096
+ 114          //  return tep;
+C51 COMPILER V9.56.0.0   ADC                                                               11/24/2020 14:40:58 PAGE 3   
 
- 115          
+ 115          //}
  116          
  117          
+ 118          
+ 119          
+ 120          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

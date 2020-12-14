@@ -266,7 +266,7 @@ void temperature_handle ( void )
 				if ( first_heat_std == 1 )
 				{
 					first_heat_std = 0;
-					if ( temp > 75 )
+					if ( temp > 85 )
 					{
 						Heat_start_std = 0;
 						heat_step = 0;

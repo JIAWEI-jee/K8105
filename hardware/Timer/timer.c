@@ -78,6 +78,7 @@ else
 			pwm_set = spid.iPriVal;
 			break;
 	}
+	pwm_set = full_pwm_set;
 }
 }
 
